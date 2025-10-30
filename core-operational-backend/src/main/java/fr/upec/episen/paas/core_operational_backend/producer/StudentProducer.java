@@ -16,11 +16,11 @@ public class StudentProducer {
 
     public void sendEntryAllowed(Student student) {
         logger.info("Sending entry allowed event for student: " + student.getId());
-        kafkaTemplate.send("entrance-logs", student.toStringWithoutShouldOpen());
+        kafkaTemplate.send("entrance-logs", student);
     }
 
     public void sendEntryLogs(Student student) {
         logger.info("Sending entry log event for student: " + student.getId());
-        kafkaTemplate.send("logs", student.toStringWithoutShouldOpen());
+        kafkaTemplate.send("logs", student);
     }
 }

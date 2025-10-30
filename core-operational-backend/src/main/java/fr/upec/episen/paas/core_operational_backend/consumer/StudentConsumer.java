@@ -27,12 +27,12 @@ public class StudentConsumer {
         try {
             id = studentDTO.id();
         } catch (Exception e) {
-            logger.error("Failed to parse message: " + studentDTO, e);
             return;
         }
         try {
             Student student = studentService.getStudentIfAllowed(id);
-            if (student.isShouldOpen()) {
+            logger.info("Retrieved student: " + student);
+            if (student != null && student.isShouldOpen()) {
                 studentProducer.sendEntryAllowed(student);
                 studentProducer.sendEntryLogs(student);
                 logger.info("Student with ID " + id + " is allowed to enter.");
