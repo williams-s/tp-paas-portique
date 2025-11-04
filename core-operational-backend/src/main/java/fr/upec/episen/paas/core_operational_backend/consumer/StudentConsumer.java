@@ -30,7 +30,9 @@ public class StudentConsumer {
         studentDTO.setTimestamp(timestamp);
         try {
             Student student = studentService.getStudentIfAllowed(id);
-            studentDTO.setStudent(student);
+            studentDTO.setId(student.getId());
+            studentDTO.setFirstname(student.getFirstname());
+            studentDTO.setLastname(student.getLastname());
             logger.info("Retrieved student: " + student);
             if (student != null && student.isShouldOpen()) {
                 studentDTO.setAllowed(true);
@@ -45,7 +47,9 @@ public class StudentConsumer {
                 logger.info("Student with ID " + id + " is not allowed to enter.");
             }
         } catch (Exception e) {
-            studentDTO.setStudent(null);
+            studentDTO.setId(null);
+            studentDTO.setFirstname(null);
+            studentDTO.setLastname(null);
             studentDTO.setAllowed(false);
             studentDTO.setStatus("KO");
             studentProducer.sendEntryLogs(studentDTO);

@@ -11,15 +11,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDTO {
-    private Student student;
+    private Long id;
+    private String firstname;
+    private String lastname;
     private Timestamp timestamp;
     private String className;
     private boolean isAllowed;
     private String status;
     private String service = "core-operational-backend";
 
-    public StudentDTO(Student student, Timestamp timestamp, String className, boolean isAllowed, String status) {
-        this.student = student;
+    public StudentDTO(Long id, String firstname, String lastname, Timestamp timestamp, String className, boolean isAllowed, String status) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.timestamp = timestamp;
         this.className = className;
         this.isAllowed = isAllowed;
