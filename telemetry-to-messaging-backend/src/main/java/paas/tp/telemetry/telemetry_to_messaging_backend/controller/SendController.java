@@ -13,12 +13,12 @@ import paas.tp.common.backend.DTO.StudentDTO;
 public class SendController {
 
     @Autowired
-    private KafkaTemplate<String, StudentDTO> kafkaTemplate;
+    private KafkaTemplate<String, Long> kafkaTemplate;
 
     @PostMapping
-    public String send(@RequestBody StudentDTO student) {
-        kafkaTemplate.send("attemps-logs", student);
-        kafkaTemplate.send("logs", student);
+    public String send(@RequestBody Long id) {
+        kafkaTemplate.send("attemps-logs", id);
+        kafkaTemplate.send("logs", id);
         return "success";
     }
 }

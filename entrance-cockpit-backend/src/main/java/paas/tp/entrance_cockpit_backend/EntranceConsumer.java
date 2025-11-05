@@ -27,6 +27,7 @@ public class EntranceConsumer {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(message);
             webSocketHandler.sendMessage(jsonNode.toString());
+            logger.info(jsonNode.toString());
             logger.info("Json sent to WebSocket");
         } catch (Exception e) {
             logger.error("Error parsing JSON, sending raw message");
