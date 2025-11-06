@@ -6,8 +6,8 @@ interface LogHistoryProps {
 }
 
 export function LogHistory({ logs }: LogHistoryProps) {
-  const authorizedCount = logs.filter(l => l.authorized).length;
-  const deniedCount = logs.filter(l => l.authorized === false).length;
+  const authorizedCount = logs.filter(l => l.allowed).length;
+  const deniedCount = logs.filter(l => l.allowed === false).length;
   const successRate = logs.length > 0
     ? ((authorizedCount / logs.length) * 100).toFixed(1)
     : 0;
@@ -57,18 +57,18 @@ export function LogHistory({ logs }: LogHistoryProps) {
       <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
         {logs.map((log) => (
           <div
-            key={log.id}
+            key={log.studentId}
             className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all border border-gray-200"
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-2">
-                {log.authorized ? (
+                {log.allowed ? (
                   <CheckCircle className="w-4 h-4 text-green-600" />
                 ) : (
                   <XCircle className="w-4 h-4 text-red-600" />
                 )}
                 <span className="text-sm font-medium text-gray-900">
-                  {log.user_name}
+                  {log.firstname } {log.lastname}
                 </span>
               </div>
               <span className="text-xs text-gray-400">
@@ -76,7 +76,7 @@ export function LogHistory({ logs }: LogHistoryProps) {
               </span>
             </div>
             <div className="text-xs text-gray-600 ml-6">
-              {log.badge_id} • {log.door_id}
+              Porte : {log.doorId}
             </div>
           </div>
         ))}
