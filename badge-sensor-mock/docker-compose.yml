@@ -3,7 +3,7 @@ services:
     build: .
     container_name: badge-sensor-mock
     environment:
-      - MQTT_BROKER_HOST=mqtt
+      - MQTT_BROKER_HOST=mqtt5
       - MQTT_BROKER_PORT=1883
       - MQTT_TOPIC=sensor/data
     networks:
