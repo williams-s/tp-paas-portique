@@ -5,11 +5,11 @@ import { Stats } from './components/Stats.tsx';
 import { Header } from './components/Header.tsx';
 
 export interface EntranceLog {
-  id: string;
-  badge_id: string;
-  user_name: string;
-  door_id: string;
-  authorized: boolean;
+  studentId: number;
+  firstname: string;
+  lastname: string;
+  allowed: boolean;
+  doorId: string;
   timestamp: string;
   source: 'cache' | 'database';
   latency_ms: number;
@@ -41,13 +41,12 @@ function App() {
 
         setStats(prev => {
           const newTotal = prev.totalAttempts + 1;
-          const newAuthorized = prev.authorized + (newLog.authorized ? 1 : 0);
-          const newDenied = prev.denied + (!newLog.authorized ? 1 : 0);
+          const newAuthorized = prev.authorized + (newLog.allowed ? 1 : 0);
+          const newDenied = prev.denied + (!newLog.allowed ? 1 : 0);
           const cacheHits = logs.filter(l => l.source === 'cache').length + (newLog.source === 'cache' ? 1 : 0);
-          const avgLat = logs.length > 0
+          const avgLat = 0 /*logs.length > 0
               ? (logs.reduce((sum, l) => sum + l.latency_ms, 0) + newLog.latency_ms) / (logs.length + 1)
-              : newLog.latency_ms;
-
+              : newLog.latency_ms;*/ //abuses de titi ismail
           return {
             totalAttempts: newTotal,
             authorized: newAuthorized,

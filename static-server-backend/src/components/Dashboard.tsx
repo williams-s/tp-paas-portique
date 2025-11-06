@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, Database, Zap } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { EntranceLog } from '../App.tsx';
 
 interface DashboardProps {
@@ -24,17 +24,17 @@ export function Dashboard({ logs }: DashboardProps) {
         ) : (
           logs.map((log) => (
             <div
-              key={log.id}
+              key={log.studentId}
               className={`p-4 rounded-lg border-l-4 transition-all duration-300 ${
-                log.authorized
+                log.allowed
                   ? 'bg-green-50 border-green-600 hover:bg-green-100'
                   : 'bg-red-50 border-red-600 hover:bg-red-100'
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3 flex-1">
-                  <div className={`mt-1 ${log.authorized ? 'text-green-600' : 'text-red-600'}`}>
-                    {log.authorized ? (
+                  <div className={`mt-1 ${log.allowed ? 'text-green-600' : 'text-red-600'}`}>
+                    {log.allowed ? (
                       <CheckCircle className="w-6 h-6" />
                     ) : (
                       <XCircle className="w-6 h-6" />
@@ -44,26 +44,26 @@ export function Dashboard({ logs }: DashboardProps) {
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="font-semibold text-gray-900">
-                        {log.user_name}
+                        {log.firstname} {log.lastname}
                       </span>
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        log.authorized
+                        log.allowed
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'
                       }`}>
-                        {log.authorized ? 'AUTORISÉ' : 'REFUSÉ'}
+                        {log.allowed ? 'AUTORISÉ' : 'REFUSÉ'}
                       </span>
                     </div>
 
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>Badge: {log.badge_id}</span>
-                      <span>Porte: {log.door_id}</span>
+                      <span>Badge: {log.studentId}</span>
+                      <span>Porte: {log.doorId}</span>
                       <span>{new Date(log.timestamp).toLocaleTimeString('fr-FR')}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-3 text-xs">
+                  {/*<div className="flex items-center space-x-3 text-xs">
                   <div className={`flex items-center space-x-1 px-2 py-1 rounded ${
                     log.source === 'cache'
                       ? 'bg-blue-100 text-blue-700'
@@ -77,10 +77,10 @@ export function Dashboard({ logs }: DashboardProps) {
                     <span>{log.source === 'cache' ? 'Cache' : 'DB'}</span>
                   </div>
 
-                  <div className="px-2 py-1 bg-gray-100 rounded text-gray-600">
+                    {/*} <div className="px-2 py-1 bg-gray-100 rounded text-gray-600">
                     {log.latency_ms}ms
                   </div>
-                </div>
+                </div>*/}
               </div>
             </div>
           ))
