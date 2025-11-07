@@ -3,6 +3,7 @@
 ## Architecture du répertoire :
 (ouvert à modification)
 
+```
 tp-paas-portique/
 ├── docker-compose.yml         
 ├── .env.example              
@@ -29,3 +30,4 @@ tp-paas-portique/
 └── scripts/
     ├── init-db.sql
     └── seed-cache.py
+```
