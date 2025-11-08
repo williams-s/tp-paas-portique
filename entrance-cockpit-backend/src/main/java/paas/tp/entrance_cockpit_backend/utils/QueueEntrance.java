@@ -8,7 +8,7 @@ import java.util.Queue;
 public class QueueEntrance {
 
     public final static Queue<JsonNode> ENTRANCES = new LinkedList<>();
-    public final static int MAX_ENTRANCES_HISTORY = 15;
+    public final static int MAX_ENTRANCES_HISTORY = 10;
 
     public static void addAcceptedEntrance(JsonNode jsonNode) {
         ENTRANCES.add(jsonNode);

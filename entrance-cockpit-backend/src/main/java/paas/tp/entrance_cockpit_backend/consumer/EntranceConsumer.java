@@ -41,6 +41,7 @@ public class EntranceConsumer {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(message);
             if (isAccessDenied(jsonNode)) {
+                QueueEntrance.addAcceptedEntrance(jsonNode);
                 sendToWebSocket(jsonNode);
             }
         } catch (Exception e) {
