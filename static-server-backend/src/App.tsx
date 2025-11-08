@@ -37,7 +37,7 @@ function App() {
     ws.onmessage = (event) => {
       try {
         const newLog: EntranceLog = JSON.parse(event.data);
-        setLogs(prev => [newLog, ...prev].slice(0, 50));
+        setLogs(prev => [newLog, ...prev].slice(0, 10));
 
         setStats(prev => {
           const newTotal = prev.totalAttempts + 1;
