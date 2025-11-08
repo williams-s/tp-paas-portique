@@ -3,7 +3,7 @@ services:
     build: .
     container_name: telemetry-to-messaging-backend
     environment:
-      - MQTT_BROKER_TYPE=192.168.248.130
+      - MQTT_BROKER_HOST=192.168.248.130
       - MQTT_BROKER_PORT=1883
       - MQTT_TOPIC=sensor/data
     ports:
