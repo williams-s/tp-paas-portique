@@ -15,6 +15,12 @@ public class MQTTListener {
     private static String PORT = System.getenv("MQTT_BROKER_PORT");
     private static String TOPIC = System.getenv("MQTT_TOPIC");
 
+    private final KafkaSender kafkaSender;
+    private MqttClient client;
+    public MQTTListener(KafkaSender kafkaSender) {
+        this.kafkaSender = kafkaSender;
+    }
+
     @PostConstruct
     public void init() throws Exception {
         if (HOST == null || PORT == null || TOPIC == null) {
@@ -26,7 +32,7 @@ public class MQTTListener {
         String clientId = "TelemetryToMessagingBackendClient";
 
         try {
-            MqttClient client = new MqttClient(brokerUrl, clientId);
+            client = new MqttClient(brokerUrl, clientId);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(false);
@@ -41,8 +47,7 @@ public class MQTTListener {
                 public void messageArrived(String topic, MqttMessage msg) throws Exception {
                     String message = new String(msg.getPayload());
                     logger.info("Received message: " + message + " from topic: " + topic);
-                    KafkaSender sender = new KafkaSender();
-                    sender.send(message);
+                    kafkaSender.send(message);
                 }
 
                 @Override
