@@ -38,7 +38,7 @@ public class StudentService {
         if (student != null) {
             boolean allowed = false;
             LocalTime time = LocalTime.now(ZoneId.of("Europe/Paris"));
-            if (time.isBefore(LocalTime.of(8, 0)) || time.isAfter(LocalTime.of(21, 0))) {
+            if (time.isAfter(LocalTime.of(8, 0)) && time.isBefore(LocalTime.of(21, 0))) {
                 allowed = student.isShouldOpen();
             }
             studentDTO.setFirstname(student.getFirstname());
