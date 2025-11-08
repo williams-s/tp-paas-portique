@@ -1,6 +1,14 @@
 services:
+  redis:
+    image: redis:8
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - data:/data
+
   core-operational-backend:
-    build: .
+    build: ./core-operational-backend
     container_name: core-operational-backend
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
@@ -8,9 +16,8 @@ services:
       SPRING_DATA_REDIS_PORT: 6379
     ports:
       - "8080:8080"
-    networks:
-      - paas-network
+    depends_on:
+      - redis-cache
 
-networks:
-  paas-network:
-    external: true
+volumes:
+  data:
