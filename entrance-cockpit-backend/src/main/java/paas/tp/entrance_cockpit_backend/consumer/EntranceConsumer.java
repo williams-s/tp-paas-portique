@@ -8,7 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import paas.tp.entrance_cockpit_backend.utils.QueueEntrance;
 import paas.tp.entrance_cockpit_backend.webSocket.WebSocketHandler;
+
 
 @Component
 @RequiredArgsConstructor
@@ -17,13 +19,13 @@ public class EntranceConsumer {
 
     private final WebSocketHandler webSocketHandler;
 
-
     @KafkaListener(topics = "entrance-logs", groupId = "entrance-cockpit-backend")
     public void consumeAcceptedEntrance(String message) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(message);
             logger.info("Access granted: " + jsonNode);
+            QueueEntrance.addAcceptedEntrance(jsonNode);
             sendToWebSocket(jsonNode);
         } catch (Exception e) {
             logger.error("Error parsing JSON, sending raw message");
@@ -65,4 +67,5 @@ public class EntranceConsumer {
         }
         return false;
     }
+
 }

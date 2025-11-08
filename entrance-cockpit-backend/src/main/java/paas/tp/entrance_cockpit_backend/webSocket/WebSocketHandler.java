@@ -1,9 +1,11 @@
 package paas.tp.entrance_cockpit_backend.webSocket;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import paas.tp.entrance_cockpit_backend.utils.QueueEntrance;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +19,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
         logger.info("Client connected : " + session.getId());
+        for (JsonNode jsonNode : QueueEntrance.ENTRANCES) {
+            sendMessage(jsonNode.toString());
+        }
     }
 
     @Override
