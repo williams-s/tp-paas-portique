@@ -19,13 +19,13 @@ public class EntranceConsumer {
 
     private final WebSocketHandler webSocketHandler;
 
-    @KafkaListener(topics = "entrance-logs", groupId = "entrance-cockpit-backend")
+    @KafkaListener(topics = "attemps-logs", groupId = "entrance-cockpit-backend")
     public void consumeAcceptedEntrance(String message) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(message);
-            logger.info("Access granted: " + jsonNode);
-            QueueEntrance.addAcceptedEntrance(jsonNode);
+            logger.info("Access granted or denied : " + jsonNode);
+            QueueEntrance.addAttemps(jsonNode);
             sendToWebSocket(jsonNode);
         } catch (Exception e) {
             logger.error("Error parsing JSON, sending raw message");
@@ -34,7 +34,7 @@ public class EntranceConsumer {
         }
     }
 
-    @KafkaListener(topics = "logs", groupId = "entrance-cockpit-backend")
+    /*@KafkaListener(topics = "logs", groupId = "entrance-cockpit-backend")
     public void consumeAllLogs(String message) {
         logger.info("Received message in topic logs: " + message);
         try {
@@ -47,7 +47,7 @@ public class EntranceConsumer {
         } catch (Exception e) {
             logger.error("Error parsing JSON, sending raw message");
         }
-    }
+    }*/
 
     private void sendToWebSocket(JsonNode jsonNode) {
         webSocketHandler.sendMessage(jsonNode.toString());
@@ -55,7 +55,7 @@ public class EntranceConsumer {
         logger.info("Json sent to WebSocket");
     }
 
-    private boolean isAccessDenied (JsonNode jsonNode) {
+    /*private boolean isAccessDenied (JsonNode jsonNode) {
         JsonNode serviceName = jsonNode.get("service");
         if (serviceName != null) {
             if (serviceName.asText().equals("core-operational-backend")) {
@@ -67,6 +67,6 @@ public class EntranceConsumer {
             }
         }
         return false;
-    }
+    }*/
 
 }
