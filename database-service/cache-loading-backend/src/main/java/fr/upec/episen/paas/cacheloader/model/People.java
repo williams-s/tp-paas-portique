@@ -5,7 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.time.OffsetDateTime; // Utilisation de OffsetDateTime pour TIMESTAMP WITH TIME ZONE
+import java.time.LocalDateTime;
+ // Utilisation de OffsetDateTime pour TIMESTAMP WITH TIME ZONE
 
 @Entity // Indique que cette classe est une entité JPA
 @Table(name = "people") // Mappe à la table 'registered_people' dans la DB
@@ -31,11 +32,11 @@ public class People {
     private Profile function;
 
     @Column(name = "allowed_interval_start")
-    private OffsetDateTime allowedIntervalStart;
+    private LocalDateTime allowedIntervalStart;
 
     @Column(name = "allowed_interval_end")
-    private OffsetDateTime allowedIntervalEnd;
+    private LocalDateTime allowedIntervalEnd;
 
     @Column(name = "registration_date")
-    private OffsetDateTime registrationDate;
+    private LocalDateTime registrationDate;
 }
