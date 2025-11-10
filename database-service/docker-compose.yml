@@ -12,6 +12,9 @@ services:
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh # Script d'initialisation (optionnel)
     ports:
       - "5432:5432" # Mappe le port 5432 du conteneur au port 5432 de l'hôte
+    networks:
+      - paas-network
+
   cache-loader:
     build: ./cache-loading-backend # Indique où trouver le Dockerfile
     restart: always
@@ -19,6 +22,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/registered_people # URL pour la connexion JDBC
       SPRING_DATASOURCE_USERNAME: dbuser
       SPRING_DATASOURCE_PASSWORD: dbpassword
+      REDIS_HOST: redis-cache
+      REDIS_PORT: 6379
+      TZ: Europe/Paris
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
       # Autres variables d'environnement Spring Boot si nécessaire
     ports:
       - "8080:8080" # Spring Boot utilise le port 8080 par défaut
@@ -31,5 +38,12 @@ services:
       timeout: 10s
       retries: 5
       start_period: 20s # Temps pour le démarrage initial de l'application
+    networks:
+      - paas-network
+
 volumes:
   db_data:
+
+networks:
+  paas-network:
+    external: true
