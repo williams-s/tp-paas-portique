@@ -10,7 +10,7 @@ public class QueueEntrance {
     public final static Queue<JsonNode> ENTRANCES = new LinkedList<>();
     public final static int MAX_ENTRANCES_HISTORY = 10;
 
-    public static void addAcceptedEntrance(JsonNode jsonNode) {
+    public static void addAttemps(JsonNode jsonNode) {
         ENTRANCES.add(jsonNode);
         if (ENTRANCES.size() > MAX_ENTRANCES_HISTORY)  {
             ENTRANCES.poll();
