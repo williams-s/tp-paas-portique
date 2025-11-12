@@ -16,7 +16,7 @@ public class KafkaConsumer {
     private static final Logger logger = LogManager.getLogger(KafkaConsumer.class);
     private final MQTTProducer mqttProducer;
 
-    @KafkaListener(topics = "attemps-logs", groupId = "core-operational-backend")
+    @KafkaListener(topics = "attemps-logs", groupId = "telemetry-to-messaging-backend")
     public void consumeAttemps(String message) {
         logger.info("Received message: " + message);
 
