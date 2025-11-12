@@ -28,7 +28,7 @@ public class KafkaSender {
             //String messageToSend = mapper.writeValueAsString(jsonNode);
 
             logger.info("Sending message: " + jsonNode);
-            kafkaTemplate.send("attemps-logs", jsonNode);
+            kafkaTemplate.send("entrance-logs", jsonNode);
             kafkaTemplate.send("logs", jsonNode);
 
         } catch (Exception e) {
