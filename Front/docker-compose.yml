@@ -14,3 +14,5 @@ services:
     container_name: static-server-backend
     ports:
       - "5173:80"
+    environment:
+      - VITE_WS_URL=wss://172.31.249.144/entrance/ws

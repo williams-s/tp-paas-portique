@@ -4,6 +4,7 @@ import { LogHistory } from './components/LogHistory.tsx';
 import { Stats } from './components/Stats.tsx';
 import { Header } from './components/Header.tsx';
 
+
 export interface EntranceLog {
   studentId: number;
   firstname: string;
@@ -25,9 +26,9 @@ function App() {
     avgLatency: 0
   });
   const [isConnected, setIsConnected] = useState(false);
-
+  const socketUrl = import.meta.env.VITE_WS_URL;
   useEffect(() => {
-    const ws = new WebSocket('ws://192.168.248.140:8087/ws/entrance');
+    const ws = new WebSocket(socketUrl);
 
     ws.onopen = () => {
       setIsConnected(true);
