@@ -35,10 +35,8 @@ public class People {
 
     @Column(name = "allowed_interval_start")
     private LocalDateTime allowedIntervalStart;
-    private LocalDateTime allowedIntervalStart;
 
     @Column(name = "allowed_interval_end")
-    private LocalDateTime allowedIntervalEnd;
     private LocalDateTime allowedIntervalEnd;
 
     @Column(name = "registration_date")

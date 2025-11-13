@@ -29,8 +29,6 @@ public class RedisConfig {
         // Configuration des sérialiseurs
         template.setKeySerializer(stringSerializer);
     template.setValueSerializer(jsonSerializer);
-        template.setHashKeySerializer(stringSerializer);
-    template.setHashValueSerializer(jsonSerializer);
 
         template.afterPropertiesSet();
         return template;
