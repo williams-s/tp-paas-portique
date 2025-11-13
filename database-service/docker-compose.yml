@@ -3,22 +3,30 @@ services:
   db:
     image: postgres:15
     restart: always
+    container_name: postgres-db
     environment:
       POSTGRES_DB: registered_people
       POSTGRES_USER: dbuser
       POSTGRES_PASSWORD: dbpassword
     volumes:
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - db_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh # Script d'initialisation (optionnel)
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     ports:
-      - "5432:5432" # Mappe le port 5432 du conteneur au port 5432 de l'hôte
+      - "5432:5432"
+
   cache-loader:
-    build: ./cache-loading-backend # Indique où trouver le Dockerfile
+    build: ./cache-loading-backend
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/registered_people # URL pour la connexion JDBC
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/registered_people # db: nom du service
       SPRING_DATASOURCE_USERNAME: dbuser
       SPRING_DATASOURCE_PASSWORD: dbpassword
+      REDIS_HOST: 192.168.248.120
+      REDIS_PORT: 6379
+      TZ: Europe/Paris
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
       # Autres variables d'environnement Spring Boot si nécessaire
     ports:
       - "8080:8080" # Spring Boot utilise le port 8080 par défaut
@@ -31,5 +39,10 @@ services:
       timeout: 10s
       retries: 5
       start_period: 20s # Temps pour le démarrage initial de l'application
+
 volumes:
   db_data:
+
+networks:
+  paas-network:
+    external: true
