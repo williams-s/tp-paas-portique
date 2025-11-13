@@ -23,7 +23,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/registered_people # db: nom du service
       SPRING_DATASOURCE_USERNAME: dbuser
       SPRING_DATASOURCE_PASSWORD: dbpassword
-      REDIS_HOST: redis-cache
+      REDIS_HOST: 192.168.248.120
       REDIS_PORT: 6379
       TZ: Europe/Paris
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
