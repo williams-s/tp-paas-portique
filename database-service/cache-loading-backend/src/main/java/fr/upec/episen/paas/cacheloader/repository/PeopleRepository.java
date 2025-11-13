@@ -12,4 +12,7 @@ public interface PeopleRepository extends JpaRepository<People, Long> {
 
     @Query("SELECT p FROM People p WHERE CURRENT_TIMESTAMP BETWEEN p.allowedIntervalStart AND p.allowedIntervalEnd")
     List<People> findAllAllowedNow();
+
+    @Query("SELECT p FROM People p WHERE CURRENT_TIMESTAMP NOT BETWEEN p.allowedIntervalStart AND p.allowedIntervalEnd")
+    List<People> findAllNotAllowedNow();
 }

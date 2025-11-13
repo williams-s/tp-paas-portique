@@ -20,7 +20,7 @@ public class People {
     private Long id;
 
     @Column(name = "num", unique = true)
-    private String num;
+    private Long num;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -39,4 +39,68 @@ public class People {
 
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getNum() {
+        return num;
+    }
+
+    public void setNum(Long num) {
+        this.num = num;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Profile getFunction() {
+        return function;
+    }
+
+    public void setFunction(Profile function) {
+        this.function = function;
+    }
+
+    public LocalDateTime getAllowedIntervalStart() {
+        return allowedIntervalStart;
+    }
+
+    public void setAllowedIntervalStart(LocalDateTime allowedIntervalStart) {
+        this.allowedIntervalStart = allowedIntervalStart;
+    }
+
+    public LocalDateTime getAllowedIntervalEnd() {
+        return allowedIntervalEnd;
+    }
+
+    public void setAllowedIntervalEnd(LocalDateTime allowedIntervalEnd) {
+        this.allowedIntervalEnd = allowedIntervalEnd;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }

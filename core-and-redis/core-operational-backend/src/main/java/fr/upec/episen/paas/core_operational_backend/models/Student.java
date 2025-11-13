@@ -12,4 +12,11 @@ public class Student {
     private String firstname;
     private String lastname;
     private boolean shouldOpen;
+
+    public Student(People p, boolean shouldOpen) {
+        this.num = p.getNum();
+        this.firstname = p.getFirstName();
+        this.lastname = p.getLastName();
+        this.shouldOpen = shouldOpen;
+    }
 }

@@ -1,11 +1,12 @@
 package fr.upec.episen.paas.cacheloader.service;
 
 import fr.upec.episen.paas.cacheloader.model.People;
+import fr.upec.episen.paas.cacheloader.model.Student;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisService {
@@ -25,7 +26,7 @@ public class RedisService {
      * Écrit la liste des personnes autorisées dans Redis
      * @param people Liste des personnes à stocker
      */
-    public void saveAllowedPeople(List<People> people) {
+    public void saveAllowedPeople(List<Student> people) {
         try {
             // Supprime l'ancienne liste
             redisTemplate.delete(ALLOWED_PEOPLE_KEY);
@@ -55,13 +56,13 @@ public class RedisService {
      * Récupère la liste des personnes autorisées depuis Redis
      * @return Liste des personnes ou liste vide
      */
-    public List<People> getAllowedPeopleFromCache() {
+    public List<Student> getAllowedPeopleFromCache() {
         try {
             List<Object> items = redisTemplate.opsForList().range(ALLOWED_PEOPLE_KEY, 0, -1);
             if (items != null && !items.isEmpty()) {
                 return items.stream()
-                    .filter(item -> item instanceof People)
-                    .map(item -> (People) item)
+                    .filter(item -> item instanceof Student)
+                    .map(item -> (Student) item)
                     .toList();
             }
             return List.of();

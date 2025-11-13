@@ -1,6 +1,7 @@
 package fr.upec.episen.paas.cacheloader.controller;
 
 import fr.upec.episen.paas.cacheloader.model.People;
+import fr.upec.episen.paas.cacheloader.model.Student;
 import fr.upec.episen.paas.cacheloader.repository.PeopleRepository;
 import fr.upec.episen.paas.cacheloader.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class PeopleController {
      * Endpoint pour récupérer les personnes autorisées depuis le cache Redis
      */
     @GetMapping("/cache/allowed")
-    public ResponseEntity<List<People>> getCachedAllowedPeople() {
-        List<People> cachedPeople = redisService.getAllowedPeopleFromCache();
+    public ResponseEntity<List<Student>> getCachedAllowedPeople() {
+        List<Student> cachedPeople = redisService.getAllowedPeopleFromCache();
         return ResponseEntity.ok(cachedPeople);
     }
 
@@ -53,7 +54,7 @@ public class PeopleController {
     @GetMapping("/cache/status")
     public ResponseEntity<Map<String, Object>> getCacheStatus() {
         Map<String, Object> status = new HashMap<>();
-        List<People> cachedPeople = redisService.getAllowedPeopleFromCache();
+        List<Student> cachedPeople = redisService.getAllowedPeopleFromCache();
         Long lastUpdate = redisService.getLastUpdateTimestamp();
         
         status.put("cached_count", cachedPeople.size());
