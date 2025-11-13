@@ -35,8 +35,7 @@ public class BadgeSensorMock {
                 String payload = "{\"studentId\":" + studentId + ",\"doorId\":" + doorId + "}";
                 MqttMessage message = new MqttMessage(payload.getBytes());
                 mqttClient.publish(TOPIC, message);
-                logger.info("Published message: " + payload + " to topic: " + TOPIC);
-                System.out.println("Published message: " + payload + " to topic: " + TOPIC);
+                logger.warn("Published message: " + payload + " to topic: " + TOPIC);
                 Thread.sleep(5000);
             }
         }

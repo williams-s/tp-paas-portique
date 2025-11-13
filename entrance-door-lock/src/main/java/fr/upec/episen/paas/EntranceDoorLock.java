@@ -9,6 +9,8 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import tools.jackson.databind.ObjectMapper;
+
 public class EntranceDoorLock {
     private static final Logger logger = LogManager.getLogger(EntranceDoorLock.class);
 
@@ -36,32 +38,34 @@ public class EntranceDoorLock {
                 @Override
                 public void connectionLost(Throwable cause) {
                     logger.error("Connection to MQTT broker lost: " + cause.getMessage());
-                    System.out.println("Connection to MQTT broker lost: " + cause.getMessage());
                 }
 
                 @Override
                 public void messageArrived(String topic, MqttMessage msg) throws Exception {
                     String message = new String(msg.getPayload());
-                    logger.info("Door opened");
-                    System.out.println("Door opened with message: " + message);
-                    Thread.sleep(5000);
-                    logger.info("Door closed");
-                    System.out.println("Door closed");
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    boolean shouldOpen = objectMapper.readTree(message).get("shouldOpen").asBoolean();
+                    if (shouldOpen) {
+                        logger.warn("Door opened");
+                        Thread.sleep(3000);
+                        logger.warn("Door closed");
+                    }
                 }
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {
-                    logger.info("Delivery complete for token: " + token);
-                    System.out.println("Delivery complete for token: " + token);
+                    logger.warn("Delivery complete for token: " + token);
                 }
             });
-            
+
             mqttClient.connect(options);
             mqttClient.subscribe(TOPIC);
-            logger.info("Subscribed to topic " + TOPIC + " on broker " + brokerUrl);
-            System.out.println("Subscribed to topic " + TOPIC + " on broker " + brokerUrl);
-        }
-        catch (Exception e) {
+            logger.warn("Subscribed to topic " + TOPIC + " on broker " + brokerUrl);
+
+            while(true) {
+                Thread.sleep(1000);
+            }
+        } catch (Exception e) {
             logger.error("Error in EntranceDoorLock: ", e);
         }
     }
