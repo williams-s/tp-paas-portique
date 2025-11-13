@@ -26,9 +26,9 @@ function App() {
     avgLatency: 0
   });
   const [isConnected, setIsConnected] = useState(false);
-  const socketUrl = import.meta.env.VITE_WS_URL;
+  //const socketUrl = import.meta.env.VITE_WS_URL;
   useEffect(() => {
-    const ws = new WebSocket(socketUrl);
+    const ws = new WebSocket("wss://172.31.249.144/entrance/ws");
 
     ws.onopen = () => {
       setIsConnected(true);
