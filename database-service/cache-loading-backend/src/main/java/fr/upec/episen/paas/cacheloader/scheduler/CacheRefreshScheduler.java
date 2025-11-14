@@ -1,6 +1,5 @@
 package fr.upec.episen.paas.cacheloader.scheduler;
 
-import fr.upec.episen.paas.cacheloader.mapper.PeopleToRedisModelMapper;
 import fr.upec.episen.paas.cacheloader.model.People;
 import fr.upec.episen.paas.cacheloader.model.Student;
 import fr.upec.episen.paas.cacheloader.repository.PeopleRepository;
@@ -12,7 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Component
@@ -23,7 +25,8 @@ public class CacheRefreshScheduler {
     private final RedisService redisService;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    PeopleToRedisModelMapper peopleToRedisModelMapper = new PeopleToRedisModelMapper();
+    private static boolean dbHasBeenUpdated = false;
+
 
     @Autowired
     public CacheRefreshScheduler(PeopleRepository peopleRepository, RedisService redisService) {
@@ -38,23 +41,43 @@ public class CacheRefreshScheduler {
      * - 300000 ms = 5 minutes
      * - 900000 ms = 15 minutes
      */
-    //@Scheduled(fixedRate = 30000)
-    public void refreshPeopleCache() {
+    @Scheduled(fixedRate = 30000)
+    private void refreshPeopleCache() {
+        if (!dbHasBeenUpdated) {
+            return;
+        }
         try {
             System.out.println("[Scheduler] " + LocalDateTime.now().format(formatter) + " - Rafraîchissement du cache Redis...");
             
             // Récupère les personnes autorisées (équivalent de getPersonAllowed())
             List<People> allowedPeople = peopleRepository.findAllAllowedNow();
             List<People> deniedPeople = peopleRepository.findAllNotAllowedNow();
+            
+            // TODO: Mapper (stream?) sur des hashmap (cf doc redis) avec pour clé l'ID
+            Map<String, Map<String, String>> lmap = new HashMap<>();
 
-            List<Student> combinedStudent = Stream.concat(
-                peopleToRedisModelMapper.peopleToStudent(allowedPeople, true).stream(),
-                peopleToRedisModelMapper.peopleToStudent(deniedPeople, false).stream()).toList();
+            for (People people : allowedPeople) {
+                Map<String, String> ap = new HashMap<>();
+                ap.put("firstname", people.getFirstName());
+                ap.put("lastname", people.getLastName());
+                ap.put("isAuthorized", "true");
+                lmap.put(people.getNum(), ap);
+            }
+
+            for (People people : deniedPeople) {
+                Map<String, String> ap = new HashMap<>();
+                ap.put("firstname", people.getFirstName());
+                ap.put("lastname", people.getLastName());
+                ap.put("isAuthorized", "false");
+                lmap.put(people.getNum(), ap);
+            }
+
             
             // Écrit dans Redis
-            redisService.saveAllowedPeople(combinedStudent);
+            redisService.saveAllowedPeople(lmap);
             
-            System.out.println("[Scheduler] ✓ Cache mis à jour avec " + combinedStudent.size() + " personnes");
+            System.out.println("[Scheduler] ✓ Cache mis à jour avec " + lmap.size() + " personnes");
+            dbHasBeenUpdated = false;
         } catch (Exception e) {
             System.err.println("[Scheduler] ✗ Erreur lors du rafraîchissement : " + e.getMessage());
             e.printStackTrace();
@@ -65,9 +88,14 @@ public class CacheRefreshScheduler {
      * Optionnel : Tâche initiale au démarrage de l'application
      * Attends 5 secondes avant la première exécution
      */
-    @Scheduled(initialDelay = 5000, fixedRate = 30000)
-    public void initializeCache() {
+    @Scheduled(initialDelay = 5000)
+    private void initializeCache() {
+        dbHasBeenUpdated = true;
         System.out.println("[Scheduler] Application démarrée, initialisation du cache...");
         refreshPeopleCache();
+    }
+
+    public void tableHasBeenUpdated() {
+        dbHasBeenUpdated = true;
     }
 }

@@ -1,21 +1,28 @@
 package fr.upec.episen.paas.cacheloader.service;
 
-import fr.upec.episen.paas.cacheloader.model.People;
 import fr.upec.episen.paas.cacheloader.model.Student;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RedisService {
 
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private final RedisTemplate<String, Object> redisTemplate;
     
     // Clé Redis pour stocker la liste des personnes autorisées
-    private static final String ALLOWED_PEOPLE_KEY = "allowed:people";
+    private static final String ALLOWED_PEOPLE_KEY = "allowed:student";
     private static final String ALLOWED_PEOPLE_TIMESTAMP_KEY = "allowed:people:timestamp";
+    private static final String STUDENT_KEY = "student:";
 
     @Autowired
     public RedisService(RedisTemplate<String, Object> redisTemplate) {
@@ -26,20 +33,20 @@ public class RedisService {
      * Écrit la liste des personnes autorisées dans Redis
      * @param people Liste des personnes à stocker
      */
-    public void saveAllowedPeople(List<Student> people) {
+    public void saveAllowedPeople(Map<String, Map<String, String>> people) {
         try {
             // Supprime l'ancienne liste
             redisTemplate.delete(ALLOWED_PEOPLE_KEY);
             
             // Stocke chaque personne avec un index
-            for (int i = 0; i < people.size(); i++) {
-                redisTemplate.opsForList().rightPush(ALLOWED_PEOPLE_KEY, people.get(i));
+            for (String key : people.keySet()) {
+                redisTemplate.opsForValue().append(STUDENT_KEY+key, people.get(key).toString());
             }
             
             // Enregistre le timestamp de la mise à jour
             redisTemplate.opsForValue().set(
                 ALLOWED_PEOPLE_TIMESTAMP_KEY, 
-                System.currentTimeMillis()
+                LocalDateTime.now().format(formatter)
             );
             
             // Les données restent dans Redis indéfiniment (ou définissez une TTL si nécessaire)

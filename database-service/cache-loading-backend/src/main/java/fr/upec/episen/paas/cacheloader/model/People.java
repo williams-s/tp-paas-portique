@@ -22,7 +22,7 @@ public class People {
     private Long id;
 
     @Column(name = "num", unique = true)
-    private Long num;
+    private String num;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -50,11 +50,11 @@ public class People {
         this.id = id;
     }
 
-    public Long getNum() {
+    public String getNum() {
         return num;
     }
 
-    public void setNum(Long num) {
+    public void setNum(String num) {
         this.num = num;
     }
 
