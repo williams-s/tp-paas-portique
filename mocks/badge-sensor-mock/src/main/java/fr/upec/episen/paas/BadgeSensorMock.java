@@ -6,7 +6,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import javax.net.ssl.SSLContext;
 
 public class BadgeSensorMock {
     private static String HOST = System.getenv("MQTT_BROKER_HOST");
@@ -21,13 +24,36 @@ public class BadgeSensorMock {
             return;
         }
 
-        String brokerUrl = "tcp://" + HOST + ":" + PORT;
+        String brokerUrl = "ssl://" + HOST + ":" + PORT;
         String clientId = "BadgeSensorMockClient";
 
         try {
+            //logger.info("Before connnection");
+            //System.out.println("Before connnection");
             IMqttClient mqttClient = new MqttClient(brokerUrl, clientId);
-            mqttClient.connect();
+            MqttConnectOptions options = new MqttConnectOptions();
 
+            // TLS sans vérification de certificat ET sans vérification hostname
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, new javax.net.ssl.X509TrustManager[]{
+                    new javax.net.ssl.X509TrustManager() {
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() { return new java.security.cert.X509Certificate[0]; }
+                    }
+            }, new java.security.SecureRandom());
+
+            options.setSocketFactory(sslContext.getSocketFactory());
+
+            options.setHttpsHostnameVerificationEnabled(false);
+
+            options.setConnectionTimeout(60);
+            options.setKeepAliveInterval(60);
+            options.setAutomaticReconnect(true);
+            //logger.info("After creation");
+            mqttClient.connect(options);
+            //logger.info("After connnection");
+            //System.out.println("After connnection");
             Random random = new Random();
             while (true) {
                 long studentId = random.nextInt(100);
@@ -36,6 +62,7 @@ public class BadgeSensorMock {
                 MqttMessage message = new MqttMessage(payload.getBytes());
                 mqttClient.publish(TOPIC, message);
                 logger.warn("Published message: " + payload + " to topic: " + TOPIC);
+                System.out.println("Published message: " + payload + " to topic: " + TOPIC);
                 Thread.sleep(5000);
             }
         }

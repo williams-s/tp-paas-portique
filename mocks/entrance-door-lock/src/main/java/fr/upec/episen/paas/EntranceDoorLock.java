@@ -11,6 +11,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import tools.jackson.databind.ObjectMapper;
 
+import javax.net.ssl.SSLContext;
+
 public class EntranceDoorLock {
     private static final Logger logger = LogManager.getLogger(EntranceDoorLock.class);
 
@@ -24,15 +26,30 @@ public class EntranceDoorLock {
             return;
         }
 
-        String brokerUrl = "tcp://" + HOST + ":" + PORT;
+        String brokerUrl = "ssl://" + HOST + ":" + PORT;
         String clientId = "EntranceDoorLockClient";
 
         try {
             IMqttClient mqttClient = new MqttClient(brokerUrl, clientId);
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(false);
+
+            // TLS sans vérification de certificat ET sans vérification hostname
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, new javax.net.ssl.X509TrustManager[]{
+                    new javax.net.ssl.X509TrustManager() {
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() { return new java.security.cert.X509Certificate[0]; }
+                    }
+            }, new java.security.SecureRandom());
+
+            options.setSocketFactory(sslContext.getSocketFactory());
+
+            options.setHttpsHostnameVerificationEnabled(false);
+
+            options.setConnectionTimeout(60);
+            options.setKeepAliveInterval(60);
             options.setAutomaticReconnect(true);
-            options.setConnectionTimeout(10);
 
             mqttClient.setCallback(new MqttCallback() {
                 @Override
@@ -61,7 +78,6 @@ public class EntranceDoorLock {
             mqttClient.connect(options);
             mqttClient.subscribe(TOPIC);
             logger.warn("Subscribed to topic " + TOPIC + " on broker " + brokerUrl);
-
             while(true) {
                 Thread.sleep(1000);
             }
