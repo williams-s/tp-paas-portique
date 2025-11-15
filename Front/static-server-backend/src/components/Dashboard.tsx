@@ -1,16 +1,51 @@
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, DoorOpen } from 'lucide-react';
 import { EntranceLog } from '../App.tsx';
+import { DoorService } from './DoorService.tsx';
+import{ useState } from 'react';
 
 interface DashboardProps {
   logs: EntranceLog[];
 }
 
 export function Dashboard({ logs }: DashboardProps) {
+  const [isOpening, setIsOpening] = useState(false);
+
+  const handleOpenDoor = async () => {
+    setIsOpening(true);
+    try {
+      const success = await DoorService.openDoor();
+      if (success) {
+        console.log('Door opened successfully');
+      } else {
+        console.error('Failed to open door');
+      }
+    } catch (error) {
+      console.error('Error opening door:', error);
+    } finally {
+      setIsOpening(false);
+    }
+  };
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900">Entrées en temps réel</h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
+          {/* Bouton d'ouverture manuelle */}
+          <button
+            onClick={handleOpenDoor}
+            disabled={isOpening}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              isOpening 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            <DoorOpen className="w-4 h-4" />
+            <span>{isOpening ? 'Ouverture...' : 'Ouvrir Porte'}</span>
+          </button>
+          
+          <div className="flex items-center space-x-2"></div>
           <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse" />
           <span className="text-sm text-gray-500">Live</span>
         </div>
