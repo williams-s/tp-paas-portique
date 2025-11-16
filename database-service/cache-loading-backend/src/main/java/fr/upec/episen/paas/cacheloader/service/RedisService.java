@@ -35,13 +35,13 @@ public class RedisService {
      */
     public void saveAllowedPeople(Map<String, Student> studentsMap) {
         try {
-            // Supprime l'ancienne liste
-            redisTemplate.delete(STUDENT_KEY);
-            
             ObjectMapper objectMapper = new ObjectMapper();
 
             // Sérialise chaque Student en JSON et stocke dans Redis sur l'index du people
             for (String studentId : studentsMap.keySet()) {
+                // Supprime l'ancienne valeur
+                redisTemplate.delete(STUDENT_KEY+":"+studentId);
+                
                 String jsonStudent = objectMapper.writeValueAsString(studentsMap.get(studentId));
                 redisTemplate.opsForValue().append(STUDENT_KEY+":"+studentId, jsonStudent);
             }
