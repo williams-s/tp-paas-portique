@@ -57,7 +57,7 @@ export function LogHistory({ logs }: LogHistoryProps) {
       <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
         {logs.map((log) => (
           <div
-            key={log.studentId}
+            key={log.num}
             className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all border border-gray-200"
           >
             <div className="flex items-center justify-between mb-1">

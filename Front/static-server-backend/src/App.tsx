@@ -6,7 +6,7 @@ import { Header } from './components/Header';
 import { PeopleList } from './components/PeopleList';
 
 export interface EntranceLog {
-  studentId: number;
+  num: string;
   firstname: string;
   lastname: string;
   allowed: boolean;

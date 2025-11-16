@@ -76,7 +76,7 @@ export function Dashboard({ logs }: DashboardProps) {
         ) : (
           logs.map((log) => (
             <div
-              key={log.studentId}
+              key={log.num}
               className={`p-4 rounded-lg border-l-4 transition-all duration-300 ${
                 log.allowed
                   ? 'bg-green-50 border-green-600 hover:bg-green-100'
@@ -108,7 +108,7 @@ export function Dashboard({ logs }: DashboardProps) {
                     </div>
 
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>Badge: {log.studentId}</span>
+                      <span>Badge: {log.num}</span>
                       <span>Porte: {log.doorId}</span>
                       <span>{new Date(log.timestamp).toLocaleTimeString('fr-FR')}</span>
                     </div>
