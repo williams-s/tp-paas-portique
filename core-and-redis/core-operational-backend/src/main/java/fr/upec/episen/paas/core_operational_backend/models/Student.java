@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Student {
-    private Long studentId;
-    private Long num;
+    private String num;
     private String firstname;
     private String lastname;
-    private boolean shouldOpen;
+    private String isAuthorized;
 }
