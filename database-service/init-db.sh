@@ -7,7 +7,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Crée la table 'people' si elle n'existe pas
     CREATE TABLE IF NOT EXISTS people (
         id SERIAL PRIMARY KEY,
-        num string UNIQUE,
+        num VARCHAR(50) UNIQUE,
         first_name VARCHAR(50) NOT NULL,
         last_name VARCHAR(150) NOT NULL,
         function PROFILE NOT NULL,
