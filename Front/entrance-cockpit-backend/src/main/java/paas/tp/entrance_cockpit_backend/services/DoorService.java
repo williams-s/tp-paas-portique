@@ -29,6 +29,7 @@ public class DoorService {
             jsonNode.put("manually_open_door", true);
             logger.info("Sending message: " + jsonNode);
             kafkaTemplate.send("attemps-logs",jsonNode);
+            kafkaTemplate.send("logs",jsonNode);
             return true;
         } catch (Exception e) {
             logger.error("Error during JSON parsing or sending message: ", e);

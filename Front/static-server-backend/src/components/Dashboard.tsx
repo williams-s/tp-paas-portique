@@ -15,6 +15,10 @@ export function Dashboard({ logs }: DashboardProps) {
       alert("Veuillez spécifier quelle porte vous voulez ouvrir");
       return;
     }
+    if (doorId > 4 || doorId < 1) {
+      alert("Veuillez specifier une porte entre 1 et 4");
+      return;
+    }
     setIsOpening(true);
     try {
       const success = await DoorService.openDoor(doorId.toString());
