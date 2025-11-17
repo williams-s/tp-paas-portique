@@ -42,11 +42,12 @@ public class CacheRefreshScheduler {
      */
     @Scheduled(fixedRate = 30000)
     private void refreshPeopleCache() {
-        
+        /*
         if (!dbHasBeenUpdated) {
             System.out.println("[Scheduler] " + LocalDateTime.now().format(formatter) + " - Pas de changement enregistré, retry dans 30s...");
             return;
         }
+            */
         try {
             System.out.println("[Scheduler] " + LocalDateTime.now().format(formatter) + " - Rafraîchissement du cache Redis...");
             

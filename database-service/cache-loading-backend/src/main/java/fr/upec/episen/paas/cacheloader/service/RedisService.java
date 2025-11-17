@@ -38,24 +38,14 @@ public class RedisService {
     public void saveAllowedPeople(Map<String, Student> studentsMap) {
         try {
 
-            Set<String> keys = redisTemplate.keys(STUDENT_KEY);
-            System.out.println("########### Il y a "+keys.size()+" enregistrements");
-            System.out.println("suppression");
-            for (String key : keys) {
-                System.out.println(key);
-                redisTemplate.delete(key);
-            }
-            
-            keys = redisTemplate.keys(STUDENT_KEY);
-            System.out.println("########### Il y a "+keys.size()+" enregistrements");
+
+            redisTemplate.getConnectionFactory().getConnection().flushAll();
             
 
             ObjectMapper objectMapper = new ObjectMapper();
 
             // Sérialise chaque Student en JSON et stocke dans Redis sur l'index du people
             for (String studentId : studentsMap.keySet()) {
-                // Supprime l'ancienne valeur
-                //redisTemplate.delete(STUDENT_KEY+":"+studentId);
                 
                 String jsonStudent = objectMapper.writeValueAsString(studentsMap.get(studentId));
                 JsonNode node = objectMapper.readTree(jsonStudent);
