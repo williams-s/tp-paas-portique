@@ -1,6 +1,12 @@
 # tp-paas-portique
+[📊 Backlog](Backlog/Backlog.xlsx)
 
-## Architecture du répertoire :
+## Architecture du projet
+![img.png](Backlog/Architecture.png)
+
+
+
+### Architecture du répertoire :
 (ouvert à modification)
 
 ```
