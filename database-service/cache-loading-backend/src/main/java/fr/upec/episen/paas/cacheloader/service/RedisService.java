@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class RedisService {
@@ -37,11 +38,17 @@ public class RedisService {
     public void saveAllowedPeople(Map<String, Student> studentsMap) {
         try {
 
-            redisTemplate.unlink(STUDENT_KEY);
-            Object list = redisTemplate.opsForValue().get(STUDENT_KEY);
-            System.out.println("########### list des personnes presentes");
-            System.out.println(list);
-            System.out.println("########### fin de la liste");
+            Set<String> keys = redisTemplate.keys(STUDENT_KEY);
+            System.out.println("########### Il y a "+keys.size()+" enregistrements");
+            System.out.println("suppression");
+            for (String key : keys) {
+                System.out.println(key);
+                redisTemplate.delete(key);
+            }
+            
+            keys = redisTemplate.keys(STUDENT_KEY);
+            System.out.println("########### Il y a "+keys.size()+" enregistrements");
+            
 
             ObjectMapper objectMapper = new ObjectMapper();
 

@@ -81,7 +81,7 @@ public class CacheRefreshScheduler {
 
             System.out.println("[Scheduler] ✓ Cache mis à jour avec " + students.size() + " personnes");
             
-            // TODO dbHasBeenUpdated = false;
+            dbHasBeenUpdated = false;
         } catch (Exception e) {
             System.err.println("[Scheduler] ✗ Erreur lors du rafraîchissement : " + e.getMessage());
             e.printStackTrace();
