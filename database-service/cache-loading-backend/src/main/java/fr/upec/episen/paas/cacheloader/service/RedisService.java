@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
@@ -35,15 +36,21 @@ public class RedisService {
      */
     public void saveAllowedPeople(Map<String, Student> studentsMap) {
         try {
+
+            redisTemplate.delete(STUDENT_KEY);
+            Object list = redisTemplate.opsForValue().get(STUDENT_KEY);
+            System.out.println(list);
+
             ObjectMapper objectMapper = new ObjectMapper();
 
             // Sérialise chaque Student en JSON et stocke dans Redis sur l'index du people
             for (String studentId : studentsMap.keySet()) {
                 // Supprime l'ancienne valeur
-                redisTemplate.delete(STUDENT_KEY+":"+studentId);
+                //redisTemplate.delete(STUDENT_KEY+":"+studentId);
                 
                 String jsonStudent = objectMapper.writeValueAsString(studentsMap.get(studentId));
-                redisTemplate.opsForValue().set(STUDENT_KEY+":"+studentId, jsonStudent);
+                JsonNode node = objectMapper.readTree(jsonStudent);
+                redisTemplate.opsForValue().set(STUDENT_KEY+":"+studentId, node);
             }
             
             // Enregistre le timestamp de la mise à jour
