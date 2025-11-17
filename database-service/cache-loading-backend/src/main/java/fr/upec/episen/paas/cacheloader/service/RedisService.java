@@ -37,9 +37,11 @@ public class RedisService {
     public void saveAllowedPeople(Map<String, Student> studentsMap) {
         try {
 
-            redisTemplate.delete(STUDENT_KEY);
+            redisTemplate.unlink(STUDENT_KEY);
             Object list = redisTemplate.opsForValue().get(STUDENT_KEY);
+            System.out.println("########### list des personnes presentes");
             System.out.println(list);
+            System.out.println("########### fin de la liste");
 
             ObjectMapper objectMapper = new ObjectMapper();
 
