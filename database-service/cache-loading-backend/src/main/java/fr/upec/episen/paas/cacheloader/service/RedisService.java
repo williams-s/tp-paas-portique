@@ -39,8 +39,11 @@ public class RedisService {
 
             // Sérialise chaque Student en JSON et stocke dans Redis sur l'index du people
             for (String studentId : studentsMap.keySet()) {
+                // Supprime l'ancienne valeur
+                redisTemplate.delete(STUDENT_KEY+":"+studentId);
+                
                 String jsonStudent = objectMapper.writeValueAsString(studentsMap.get(studentId));
-                redisTemplate.opsForValue().set(STUDENT_KEY+":"+studentId, jsonStudent);
+                redisTemplate.opsForValue().append(STUDENT_KEY+":"+studentId, jsonStudent);
             }
             
             // Enregistre le timestamp de la mise à jour
