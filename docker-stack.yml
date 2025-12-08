@@ -44,7 +44,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/postgres_password
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       REDIS_HOST: 192.168.248.120
       REDIS_PORT: 6379
       TZ: Europe/Paris
@@ -53,6 +53,8 @@ services:
       - "8081:8080"
     networks:
       - core-and-redis-network
+    env_file:
+      - /secrets/.env
     secrets:
       - source: postgres_password
         target: postgres_password
@@ -67,14 +69,13 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/postgres_password
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8087:8087"
     networks:
       - front-network
-    secrets:
-      - source: postgres_password
-        target: postgres_password
+    env_file:
+      - /secrets/.env
     deploy:
       placement:
         constraints:
@@ -150,8 +151,6 @@ volumes:
   mqtt_log:
 
 secrets:
-  postgres_password:
-    external: true
   nginx_cert_v1:
     external: true
   nginx_key_v1:
