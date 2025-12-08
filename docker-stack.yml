@@ -45,7 +45,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: s:Nvt:<M;+L{}3tJ
       REDIS_HOST: 192.168.248.120
       REDIS_PORT: 6379
       TZ: Europe/Paris
@@ -67,7 +67,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: s:Nvt:<M;+L{}3tJ
     ports:
       - "8087:8087"
     secrets:
