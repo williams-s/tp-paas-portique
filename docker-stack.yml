@@ -103,9 +103,9 @@ services:
         target: /etc/nginx/nginx.conf
     secrets:
       - source: nginx_cert_v1
-        target: /etc/nginx/ssl/mycert.pem
+        target: /etc/nginx/ssl/reverse-proxy.crt
       - source: nginx_key_v1
-        target: /etc/nginx/ssl/mykey.pem
+        target: /etc/nginx/ssl/reverse-proxy.key
     restart: unless-stopped
     deploy:
       placement:
