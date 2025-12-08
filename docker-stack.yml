@@ -14,7 +14,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - data:/data
+      - redis_data:/data
     networks:
       - core-and-redis-network
     deploy:
@@ -23,7 +23,7 @@ services:
           - node.labels.role == core-redis
 
   core-operational-backend:
-    image: jwickpaas/core-operational-backend:latest
+    image: smailliwdocker/core-operational-backend:latest
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SPRING_DATA_REDIS_HOST: redis-cache
@@ -41,7 +41,7 @@ services:
 
   cache-loading-backend:
     #restart: always
-    image: jwickpaas/cache-loading-backend:latest
+    image: smailliwdocker/cache-loading-backend:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
@@ -52,7 +52,7 @@ services:
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
       # Autres variables d'environnement Spring Boot si nécessaire
     ports:
-      - "8080:8080" # Spring Boot utilise le port 8080 par défaut
+      - "8081:8080" # Spring Boot utilise le port 8080 par défaut
     # Ajoutez un healthcheck pour une robustesse accrue (optionnel mais recommandé)
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ] # Nécessite Spring Boot Actuator
@@ -66,7 +66,7 @@ services:
           - node.labels.role == cache-loader
 
   entrance-cockpit-backend:
-    image: jwickpaas/entrance-cockpit-backend:latest
+    image: smailliwdocker/entrance-cockpit-backend:latest
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
@@ -82,7 +82,7 @@ services:
           - node.labels.role == front
 
   static-server-backend:
-    image: jwickpaas/static-server-backend:latest
+    image: smailliwdocker/static-server-backend:latest
     ports:
       - "5173:80"
     networks:
@@ -130,7 +130,7 @@ services:
           - node.labels.role == mqtt-telemetry
 
   telemetry-to-messaging-backend:
-    image: jwickpaas/telemetry-to-messaging-backend:latest
+    image: smailliwdocker/telemetry-to-messaging-backend:latest
     environment:
       - MQTT_BROKER_HOST=mqtt5
       - MQTT_BROKER_PORT=1883
@@ -139,13 +139,14 @@ services:
     ports:
       - "8085:8085"
     networks:
-      - mqtt-telemetry
+      - mqtt-and-telemetry-network
     deploy:
       placement:
         constraints:
           - node.labels.role == mqtt-telemetry
 
 volumes:
+  redis_data:
   mqtt_data:
   mqtt_log:
 

@@ -24,28 +24,28 @@ jobs:
 
       - name: Build and push cache-loading-backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cache-loading-backend:latest ./cache-loading-backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/cache-loading-backend:latest
+          docker build -t smailliwdocker/cache-loading-backend:latest ./cache-loading-backend
+          docker push smailliwdocker/cache-loading-backend:latest
 
       - name: Build and push core-operational-backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/core-operational-backend:latest ./core-operational-backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/core-operational-backend:latest
+          docker build -t smailliwdocker/core-operational-backend:latest ./core-operational-backend
+          docker push smailliwdocker/core-operational-backend:latest
 
       - name: Build and push entrance-cockpit-backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/entrance-cockpit-backend:latest ./entrance-cockpit-backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/entrance-cockpit-backend:latest
+          docker build -t smailliwdocker/entrance-cockpit-backend:latest ./entrance-cockpit-backend
+          docker push smailliwdocker/entrance-cockpit-backend:latest
 
       - name: Build and push static-server-backend image
         run: |
-          docker build --build-arg VITE_WS_URL="wss://172.31.249.144/entrance/ws" -t ${{ secrets.DOCKER_USERNAME }}/static-server-backend:latest ./static-server-backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/static-server-backend:latest
+          docker build --build-arg VITE_WS_URL="wss://172.31.249.144/entrance/ws" -t smailliwdocker/static-server-backend:latest ./static-server-backend
+          docker push smailliwdocker/static-server-backend:latest
 
       - name: Build and push telemetry-to-messaging-backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/telemetry-to-messaging-backend:latest ./telemetry-to-messaging-backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/telemetry-to-messaging-backend:latest
+          docker build -t smailliwdocker/telemetry-to-messaging-backend:latest ./telemetry-to-messaging-backend
+          docker push smailliwdocker/telemetry-to-messaging-backend:latest
 
 
       - name: Deploy stack to Swarm
