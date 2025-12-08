@@ -10,8 +10,6 @@ import paas.tp.entrance_cockpit_backend.DTO.PeopleDTO;
 import paas.tp.entrance_cockpit_backend.models.People;
 import paas.tp.entrance_cockpit_backend.services.PeopleService;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/people")
 public class PeopleController {

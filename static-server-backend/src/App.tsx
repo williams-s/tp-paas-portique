@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Dashboard } from './components/Dashboard';
-import { LogHistory } from './components/LogHistory';
-import { Stats } from './components/Stats';
-import { Header } from './components/Header';
-import { PeopleList } from './components/PeopleList';
+import { Dashboard } from './components/Dashboard.tsx';
+import { LogHistory } from './components/LogHistory.tsx';
+import { Stats } from './components/Stats.tsx';
+import { Header } from './components/Header.tsx';
+import { PeopleList } from './components/PeopleList.tsx';
 
 export interface EntranceLog {
   num: string;

@@ -1,11 +1,9 @@
 package paas.tp.entrance_cockpit_backend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import paas.tp.entrance_cockpit_backend.models.People;
-import paas.tp.entrance_cockpit_backend.models.Profile;
 import paas.tp.entrance_cockpit_backend.repository.PeopleRepository;
 
 @Service
