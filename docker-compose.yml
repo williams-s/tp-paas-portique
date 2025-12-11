@@ -1,0 +1,54 @@
+services:
+  watchdog:
+    build: ./watchdog
+    container_name: watchdog
+    environment:
+      - shared_file_path=/tmp/sharedFiles/core_status.yml
+    volumes:
+      - ./sharedFiles/core_status.yml:/tmp/sharedFiles/core_status.yml
+    networks:
+      - paas-network
+
+  core-operational-backend:
+    build: ./core-operational-backend
+    container_name: core-operational-backend
+    volumes:
+      - ./sharedFiles/core_status.yml:/tmp/sharedFiles/core_status.yml
+    networks:
+      - paas-network
+    ports:
+      - "8080:8080"
+  
+  core1:
+    build: ./operational-backend
+    container_name: core1
+    networks:
+      - paas-network
+    environment:
+      - spring.data.redis.host=redis-cache
+      - spring.data.redis.port=6379
+    ports:
+      - "8081:8080"
+  
+  core2:
+    build: ./operational-backend
+    container_name: core2
+    networks:
+      - paas-network
+    environment:
+      - spring.data.redis.host=redis-cache
+      - spring.data.redis.port=6379
+    ports:
+      - "8082:8080"
+
+  redis:
+    image: "redis:latest"
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - paas-network
+  
+networks:
+  paas-network:
+    driver: bridge

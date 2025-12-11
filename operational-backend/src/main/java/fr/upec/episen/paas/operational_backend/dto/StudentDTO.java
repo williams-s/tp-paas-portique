@@ -1,4 +1,4 @@
-package fr.upec.episen.paas.core_operational_backend.dto;
+package fr.upec.episen.paas.operational_backend.dto;
 
 import java.sql.Timestamp;
 
@@ -17,5 +17,5 @@ public class StudentDTO {
     private Timestamp timestamp;
     private String className;
     private boolean allowed;
-    private String service = "operational-backend";
+    private String service = "core-operational-backend";
 }

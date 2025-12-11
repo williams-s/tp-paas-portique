@@ -13,16 +13,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.upec.episen.paas.core_operational_backend.dto.StudentDTO;
 import fr.upec.episen.paas.core_operational_backend.producer.StudentProducer;
-import fr.upec.episen.paas.core_operational_backend.service.StudentService;
+import fr.upec.episen.paas.core_operational_backend.service.CoreApiService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class StudentConsumer {
     private static final Logger logger = LogManager.getLogger(StudentConsumer.class);
-
-    private final StudentService studentService;
     private final StudentProducer studentProducer;
+    private final CoreApiService coreApiService;
 
     @KafkaListener(topics = "entrance-logs", groupId = "core-operational-backend")
     public void consumeStudentEntranceEvent(String object) {
@@ -36,23 +35,22 @@ public class StudentConsumer {
             Long studentId = jsonNode.get("studentId").asLong();
             Long doorId = jsonNode.get("doorId").asLong();
 
-            studentDTO = studentService.getStudentDTO(studentId);
+            studentDTO = coreApiService.fetchStudent(studentId);
+
             studentDTO.setDoorId(doorId);
             studentDTO.setTimestamp(Timestamp.from(Instant.now()));
 
             if (studentDTO.isAllowed()) {
-                studentDTO.setStatus("OK");
                 logger.info("Student with ID " + studentId + " is allowed to enter through the door " + doorId + ".");
             } else {
-                studentDTO.setStatus("OK");
-                logger.info("Student with ID " + studentId + " is not allowed to enter through the door " + doorId + ".");
+                logger.info(
+                        "Student with ID " + studentId + " is not allowed to enter through the door " + doorId + ".");
             }
 
             studentProducer.sendEntry(studentDTO);
             studentProducer.sendEntryLogs(studentDTO);
         } catch (Exception e) {
             logger.error("Error processing student attempt event: " + e.getMessage());
-            studentDTO.setStatus("KO");
             studentProducer.sendEntryLogs(studentDTO);
             return;
         }
