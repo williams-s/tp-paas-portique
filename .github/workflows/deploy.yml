@@ -1,9 +1,10 @@
-name: Build & Deploy Database Stack
+name: Build & Deploy JWICK Stack
 
 on:
   push:
     branches:
       - dev
+      - photo-badging
 
 jobs:
   build-and-deploy:
@@ -47,6 +48,10 @@ jobs:
           docker build -t smailliwdocker/telemetry-to-messaging-backend:latest ./telemetry-to-messaging-backend
           docker push smailliwdocker/telemetry-to-messaging-backend:latest
 
+      - name: Build and push photo-storage-service image
+        run: |
+          docker build -t smailliwdocker/photo-storage-service:latest ./photo-storage-service
+          docker push smailliwdocker/photo-storage-service:latest
 
       - name: Deploy stack to Swarm
         run: |

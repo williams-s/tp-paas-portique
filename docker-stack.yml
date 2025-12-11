@@ -96,7 +96,7 @@ services:
       - "443:443"
       - "8883:8883"
     configs:
-      - source: nginx_conf_v1
+      - source: nginx_conf_v2
         target: /etc/nginx/nginx.conf
     secrets:
       - source: nginx_cert_v1
@@ -142,10 +142,22 @@ services:
         constraints:
           - node.labels.role == mqtt-telemetry
 
+  photo-storage-service:
+    image: smailliwdocker/photo-storage-service:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - photo-storage-data:/var/www/uploads
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == images-storage
+
 volumes:
   redis_data:
   mqtt_data:
   mqtt_log:
+  photo-storage-data:
 
 secrets:
   postgres_password:
@@ -156,7 +168,8 @@ secrets:
     external: true
 
 configs:
-  nginx_conf_v1:
+  nginx_conf_v2:
     external: true
   mosquitto_conf_v1:
     external: true
+

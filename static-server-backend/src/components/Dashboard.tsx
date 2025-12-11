@@ -111,11 +111,16 @@ export function Dashboard({ logs }: DashboardProps) {
                       <span>Badge: {log.num}</span>
                       <span>Porte: {log.doorId}</span>
                       <span>{new Date(log.timestamp).toLocaleTimeString('fr-FR')}</span>
-                    </div>
+                      <img
+                          src={`/images/${log.num}.jpg`}
+                          alt={`Photo Badge ${log.num}`}
+                          width={50}
+                          height={50}
+                      /></div>
                   </div>
                 </div>
 
-                  {/*<div className="flex items-center space-x-3 text-xs">
+                {/*<div className="flex items-center space-x-3 text-xs">
                   <div className={`flex items-center space-x-1 px-2 py-1 rounded ${
                     log.source === 'cache'
                       ? 'bg-blue-100 text-blue-700'

@@ -40,8 +40,9 @@ function App() {
   const [view, setView] = useState<'dashboard' | 'people'>('dashboard');
 
   useEffect(() => {
-    const ws = new WebSocket("wss://172.31.249.144/entrance/ws");
-
+    const wsUrl = import.meta.env.VITE_WS_URL;
+    //const ws = new WebSocket("wss://172.31.249.144/entrance/ws");
+    const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
       setIsConnected(true);
       console.log('WebSocket connecté');
