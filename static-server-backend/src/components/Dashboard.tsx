@@ -1,31 +1,38 @@
 import {CheckCircle, XCircle, DoorOpen} from 'lucide-react';
-import {EntranceLog} from '../App.tsx';
+import {Door, EntranceLog} from '../App.tsx';
 import {DoorService} from './DoorService.tsx';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 interface DashboardProps {
     logs: EntranceLog[];
 }
 
+
 export function Dashboard({logs}: DashboardProps) {
     const [isOpening, setIsOpening] = useState(false);
-    const [doorId, setDoorId] = useState(0);
+    const [selectedDoor, setSelectedDoor] = useState<Door | null>(null);
+    const [doors, setDoors] = useState<Door[]>([]);
+
+    useEffect(() => {
+        fetch('/doors.json')
+            .then((res) => res.json())
+            .then((data: Door[]) => setDoors(data))
+            .catch((err) => console.error("Erreur chargement doors.json:", err));
+    }, []);
+
     const handleOpenDoor = async () => {
-        if (doorId === 0) {
-            alert("Veuillez spécifier quelle porte vous voulez ouvrir");
+        if (!selectedDoor) {
+            alert("Veuillez sélectionner une porte");
             return;
         }
-        if (doorId > 4 || doorId < 1) {
-            alert("Veuillez specifier une porte entre 1 et 4");
-            return;
-        }
+
         setIsOpening(true);
         try {
-            const success = await DoorService.openDoor(doorId.toString());
+            const success = await DoorService.openDoor(selectedDoor);
             if (success) {
-                console.log('Door opened successfully');
+                console.log('Door opened successfully:', selectedDoor);
             } else {
-                console.error('Failed to open door');
+                console.error('Failed to open door:', selectedDoor);
             }
         } catch (error) {
             console.error('Error opening door:', error);
@@ -53,16 +60,22 @@ export function Dashboard({logs}: DashboardProps) {
                         <DoorOpen className="w-4 h-4"/>
                         <span>{isOpening ? 'Ouverture...' : 'Ouvrir Porte'}</span>
                     </button>
-                    <input
-                        type="number"
-                        min="1"
-                        max="4"
-                        step="1"
-                        onChange={(e) => setDoorId(parseInt(e.target.value))}
-                        placeholder="Id porte"
+                    <select
+                        value={selectedDoor?.id || ""}
+                        onChange={(e) => {
+                            const door = doors.find(p => p.id === parseInt(e.target.value));
+                            setSelectedDoor(door || null);
+                        }}
                         className="px-2 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-green-500"
-                        style={{width: '100px'}}
-                    />
+                        style={{width: '150px'}}
+                    >
+                        <option value="">Sélectionnez porte</option>
+                        {doors.map((porte) => (
+                            <option key={porte.id} value={porte.id}>
+                                {porte.name}
+                            </option>
+                        ))}
+                    </select>
                     <div className="flex items-center space-x-2"></div>
                     <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"/>
                     <span className="text-sm text-gray-500">Live</span>
@@ -98,8 +111,10 @@ export function Dashboard({logs}: DashboardProps) {
                                     </div>
 
                                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                                        <span>Badge: {log.num}</span>
-                                        <span>Porte: {log.doorId}</span>
+                                        <span>
+                                          {log.num ? `Badge: ${log.num}` : "Ouverture manuelle"}
+                                        </span>
+                                        <span>{log.doorName}</span>
                                         <span>{new Date(log.timestamp).toLocaleTimeString('fr-FR')}</span>
                                     </div>
                                 </div>

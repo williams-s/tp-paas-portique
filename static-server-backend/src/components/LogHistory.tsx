@@ -68,7 +68,9 @@ export function LogHistory({ logs }: LogHistoryProps) {
                   <XCircle className="w-4 h-4 text-red-600" />
                 )}
                 <span className="text-sm font-medium text-gray-900">
-                  {log.firstname } {log.lastname}
+                    {log.firstname || log.lastname
+                        ? `${log.firstname ?? ""} ${log.lastname ?? ""}`.trim()
+                        : "Ouverture manuelle"}
                 </span>
               </div>
               <span className="text-xs text-gray-400">
@@ -76,7 +78,7 @@ export function LogHistory({ logs }: LogHistoryProps) {
               </span>
             </div>
             <div className="text-xs text-gray-600 ml-6">
-              Porte : {log.doorId}
+              {log.doorName}
             </div>
           </div>
         ))}

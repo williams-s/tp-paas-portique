@@ -63,11 +63,14 @@ public class EntranceDoorLock {
                     ObjectMapper objectMapper = new ObjectMapper();
                     boolean shouldOpen = objectMapper.readTree(message).get("shouldOpen").asBoolean();
                     String doorId = objectMapper.readTree(message).get("doorId").asText();
+                    String doorName = objectMapper.readTree(message).get("doorName").asText();
                     if (shouldOpen) {
-                        System.out.println("Door n°" + doorId + " opened");
+                        //System.out.println("Door n°" + doorId + " opened");
+                        System.out.println("Door " + doorName + " opened");
                         Thread.sleep(3000);
                         System.out.flush();
-                        System.out.println("Door n°" + doorId + " closed");
+                        //System.out.println("Door n°" + doorId + " closed");
+                        System.out.println("Door " + doorName + " closed");
                     }
                 }
 

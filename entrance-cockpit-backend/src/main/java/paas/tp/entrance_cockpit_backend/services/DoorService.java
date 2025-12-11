@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import paas.tp.entrance_cockpit_backend.DTO.DoorDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +19,12 @@ public class DoorService {
     @Autowired
     private KafkaTemplate<String, ObjectNode> kafkaTemplate;
 
-    public boolean openDoor(String id) {
+    public boolean openDoor(DoorDTO doorDTO) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode jsonNode = mapper.createObjectNode();
-            jsonNode.put("doorId", id);
+            jsonNode.put("doorId", doorDTO.id());
+            jsonNode.put("doorName", doorDTO.name());
             jsonNode.put("allowed", true);
             jsonNode.put("service", "entrance-cockpit-backend");
             jsonNode.put("timestamp", System.currentTimeMillis());

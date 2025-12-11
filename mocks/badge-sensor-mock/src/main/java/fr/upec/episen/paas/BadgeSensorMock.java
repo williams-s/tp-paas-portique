@@ -1,7 +1,11 @@
 package fr.upec.episen.paas;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Random;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -26,6 +30,7 @@ public class BadgeSensorMock {
 
         String brokerUrl = "ssl://" + HOST + ":" + PORT;
         String clientId = "BadgeSensorMockClient";
+        List<DoorDTO> doors = loadDoors();
 
         try {
             //logger.info("Before connnection");
@@ -57,8 +62,9 @@ public class BadgeSensorMock {
             Random random = new Random();
             while (true) {
                 long studentId = random.nextInt(100) + 1;
-                long doorId = random.nextInt(4) + 1;
-                String payload = "{\"studentId\":" + studentId + ",\"doorId\":" + doorId + "}";
+                int doorId = random.nextInt(4) + 1;
+                String doorName = doors.get(doorId - 1).name();
+                String payload = "{\"studentId\":" + studentId + ",\"doorId\":" + doorId + ",\"doorName\":\"" + doorName + "\"}";
                 MqttMessage message = new MqttMessage(payload.getBytes());
                 mqttClient.publish(TOPIC, message);
                 logger.warn("Published message: " + payload + " to topic: " + TOPIC);
@@ -68,6 +74,19 @@ public class BadgeSensorMock {
         }
         catch (Exception e) {
             logger.error("Error in BadgeSensorMock: ", e);
+        }
+    }
+
+    public static List<DoorDTO> loadDoors() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return List.of(mapper.readValue(
+                    BadgeSensorMock.class.getResourceAsStream("/doors.json"),
+                    DoorDTO[].class
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
         }
     }
 }

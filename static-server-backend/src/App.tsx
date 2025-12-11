@@ -11,10 +11,17 @@ export interface EntranceLog {
   lastname: string;
   allowed: boolean;
   doorId: string;
+  doorName: string;
   timestamp: string;
   source: 'cache' | 'database';
   latency_ms: number;
 }
+
+export interface Door {
+  id: string;
+  name: string;
+}
+
 
 interface StatsState {
   totalAttempts: number;
