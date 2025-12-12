@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.upec.episen.paas.core_operational_backend.dto.StudentDTO;
 import fr.upec.episen.paas.core_operational_backend.producer.StudentProducer;
-import fr.upec.episen.paas.core_operational_backend.service.CoreApiService;
+import fr.upec.episen.paas.core_operational_backend.service.CoreApiClient;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class StudentConsumer {
     private static final Logger logger = LogManager.getLogger(StudentConsumer.class);
     private final StudentProducer studentProducer;
-    private final CoreApiService coreApiService;
+    private final CoreApiClient coreApiClient;
 
     @KafkaListener(topics = "entrance-logs", groupId = "core-operational-backend")
     public void consumeStudentEntranceEvent(String object) {
@@ -35,7 +35,7 @@ public class StudentConsumer {
             Long studentId = jsonNode.get("studentId").asLong();
             Long doorId = jsonNode.get("doorId").asLong();
 
-            studentDTO = coreApiService.fetchStudent(studentId);
+            studentDTO = coreApiClient.fetchStudent(studentId);
 
             studentDTO.setDoorId(doorId);
             studentDTO.setTimestamp(Timestamp.from(Instant.now()));
