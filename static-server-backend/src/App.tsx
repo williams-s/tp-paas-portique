@@ -59,17 +59,22 @@ function App() {
       try {
         const newLog: EntranceLog = JSON.parse(event.data);
 
-        // Use functional update to avoid stale closures and compute derived stats
         setLogs((prevLogs: EntranceLog[]) => {
-          const updatedLogs = [newLog, ...prevLogs].slice(0, 10);
+          const exists = prevLogs.some(
+              l => l.timestamp === newLog.timestamp && l.num === newLog.num
+          );
+          if (exists) return prevLogs;
+
+          const updatedLogs = [newLog, ...prevLogs].slice(0, 50);
 
           setStats((prev: StatsState) => {
             const newTotal = prev.totalAttempts + 1;
             const newAuthorized = prev.authorized + (newLog.allowed ? 1 : 0);
             const newDenied = prev.denied + (!newLog.allowed ? 1 : 0);
+
             const cacheHits = updatedLogs.filter(l => l.source === 'cache').length;
 
-            // compute running average latency correctly
+            // moyenne pondérée propre
             const prevSumLatency = prev.avgLatency * prev.totalAttempts;
             const avgLat = (prevSumLatency + newLog.latency_ms) / newTotal;
 
@@ -77,13 +82,14 @@ function App() {
               totalAttempts: newTotal,
               authorized: newAuthorized,
               denied: newDenied,
-              cacheHitRate: newTotal > 0 ? (cacheHits / newTotal) * 100 : 0,
+              cacheHitRate: (cacheHits / newTotal) * 100,
               avgLatency: avgLat
             };
           });
 
           return updatedLogs;
         });
+
 
       } catch (error) {
         console.error('Error parsing JSON:', error);
@@ -140,7 +146,7 @@ function App() {
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               <div className="xl:col-span-2">
-                <Dashboard logs={logs.slice(0, 10)} />
+                <Dashboard logs={logs} />
               </div>
 
               <div>

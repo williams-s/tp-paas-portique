@@ -66,11 +66,11 @@ public class EntranceDoorLock {
                     String doorName = objectMapper.readTree(message).get("doorName").asText();
                     if (shouldOpen) {
                         //System.out.println("Door n°" + doorId + " opened");
-                        System.out.println("Door " + doorName + " opened");
+                        System.out.println(doorName + " opened");
                         Thread.sleep(3000);
                         System.out.flush();
                         //System.out.println("Door n°" + doorId + " closed");
-                        System.out.println("Door " + doorName + " closed");
+                        System.out.println(doorName + " closed");
                     }
                 }
 

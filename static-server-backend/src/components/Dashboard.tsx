@@ -9,6 +9,7 @@ interface DashboardProps {
 
 
 export function Dashboard({logs}: DashboardProps) {
+    const displayedLogs = logs.slice(0, 10);
     const [isOpening, setIsOpening] = useState(false);
     const [selectedDoor, setSelectedDoor] = useState<Door | null>(null);
     const [doors, setDoors] = useState<Door[]>([]);
@@ -83,12 +84,12 @@ export function Dashboard({logs}: DashboardProps) {
             </div>
 
             <div className="space-y-3">
-                {logs.length === 0 ? (
+                {displayedLogs.length === 0 ? (
                     <div className="text-center py-12 text-gray-400">
                         En attente de données...
                     </div>
                 ) : (
-                    logs.map((log) => (
+                    displayedLogs.map((log) => (
                         <div
                             key={`${log.num ?? 'manual'}-${log.timestamp}`}
                             className={`p-4 rounded-lg border-l-4 transition-all duration-300 ${
