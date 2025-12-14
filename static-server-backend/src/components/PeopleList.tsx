@@ -57,8 +57,10 @@ export function PeopleList() {
       if (trimmed) {
         const enc = encodeURIComponent(trimmed);
         url = `/entrance/api/people/search?criteria=${enc}&page=${p}&size=${pageSize}`;
+        //url = `http://127.0.0.1:8087/api/people/search?criteria=${enc}&page=${p}&size=${pageSize}`
       } else {
         url = `/entrance/api/people/paginate?page=${p}&size=${pageSize}`;
+        //url = `http://127.0.0.1:8087/api/people/paginate?page=${p}&size=${pageSize}`;
       }
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -128,7 +130,7 @@ export function PeopleList() {
         <table className="min-w-full text-left">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-3 py-3 w-12 text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th scope="col" className="px-3 py-3 w-12 text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
               <th scope="col" className="px-3 py-3 w-28 text-xs font-medium text-gray-500 uppercase tracking-wider">Num</th>
               <th scope="col" className="px-3 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nom complet</th>
               <th scope="col" className="px-3 py-3 w-36 text-xs font-medium text-gray-500 uppercase tracking-wider">Fonction</th>
@@ -147,27 +149,36 @@ export function PeopleList() {
               </tr>
             ) : (
               people.map((p, idx) => (
-                <tr key={p.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}> 
-                  <td className="px-3 py-4 align-middle text-sm text-gray-700">{p.id}</td>
+                  <tr key={p.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
+                    <td className="px-1 py-1 align-middle text-center">
+                      <img
+                          //src={`http://127.0.0.1:8000/faces/${p.num}`}
+                          src={`/images/${p.num}`}
+                          alt={`Photo Badge ${p.num}`}
+                          width={150}
+                          height={150}
+                      />
+                    </td>
+                      <td className="px-3 py-4 align-middle">
+                        <span
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{p.num}</span>
+                      </td>
 
-                  <td className="px-3 py-4 align-middle">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{p.num}</span>
-                  </td>
+                      <td className="px-3 py-4 align-middle">
+                        <div className="text-sm font-medium text-gray-900">{p.firstName} {p.lastName}</div>
+                        <div className="text-xs text-gray-500">{p.num}</div>
+                      </td>
 
-                  <td className="px-3 py-4 align-middle">
-                    <div className="text-sm font-medium text-gray-900">{p.firstName} {p.lastName}</div>
-                    <div className="text-xs text-gray-500">{p.num}</div>
-                  </td>
+                      <td className="px-3 py-4 align-middle text-sm text-gray-700">{p.function}</td>
 
-                  <td className="px-3 py-4 align-middle text-sm text-gray-700">{p.function}</td>
-
-                  <td className="px-3 py-4 align-middle">
-                    <div className="text-sm text-gray-900">{formatDate(p.registrationDate)}</div>
-                    <div className="text-xs text-gray-500">{p.allowedIntervalStart ? `${new Date(p.allowedIntervalStart).toLocaleString()} → ${p.allowedIntervalEnd ? new Date(p.allowedIntervalEnd).toLocaleString() : '-'}` : '-'}</div>
-                  </td>
-                </tr>
+                      <td className="px-3 py-4 align-middle">
+                        <div className="text-sm text-gray-900">{formatDate(p.registrationDate)}</div>
+                        <div
+                            className="text-xs text-gray-500">{p.allowedIntervalStart ? `${new Date(p.allowedIntervalStart).toLocaleString()} → ${p.allowedIntervalEnd ? new Date(p.allowedIntervalEnd).toLocaleString() : '-'}` : '-'}</div>
+                      </td>
+                  </tr>
               ))
-            )}
+              )}
           </tbody>
         </table>
       </div>

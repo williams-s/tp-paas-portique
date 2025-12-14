@@ -35,9 +35,10 @@ public class StudentConsumer {
             jsonNode = mapper.readTree(object);
             Long studentId = jsonNode.get("studentId").asLong();
             Long doorId = jsonNode.get("doorId").asLong();
-
+            String doorName = jsonNode.get("doorName").asText();
             studentDTO = studentService.getStudentDTO(studentId);
             studentDTO.setDoorId(doorId);
+            studentDTO.setDoorName(doorName);
             studentDTO.setTimestamp(Timestamp.from(Instant.now()));
 
             if (studentDTO.isAllowed()) {

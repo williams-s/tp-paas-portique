@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class StudentDTO {
     private String num;
     private Long doorId;
+    private String doorName;
     private String firstname;
     private String lastname;
     private Timestamp timestamp;

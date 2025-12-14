@@ -6,10 +6,11 @@ interface LogHistoryProps {
 }
 
 export function LogHistory({ logs }: LogHistoryProps) {
-  const authorizedCount = logs.filter(l => l.allowed).length;
-  const deniedCount = logs.filter(l => l.allowed === false).length;
-  const successRate = logs.length > 0
-    ? ((authorizedCount / logs.length) * 100).toFixed(1)
+  const displayedLogs = logs.slice(0, 40);
+  const authorizedCount = displayedLogs.filter(l => l.allowed).length;
+  const deniedCount = displayedLogs.filter(l => l.allowed === false).length;
+  const successRate = displayedLogs.length > 0
+    ? ((authorizedCount / displayedLogs.length) * 100).toFixed(1)
     : 0;
 
   return (
@@ -20,7 +21,7 @@ export function LogHistory({ logs }: LogHistoryProps) {
           <h2 className="text-xl font-bold text-gray-900">Historique</h2>
         </div>
         <div className="text-sm text-gray-500">
-          {logs.length} entrées
+          {displayedLogs.length} entrées
         </div>
       </div>
 
@@ -55,10 +56,10 @@ export function LogHistory({ logs }: LogHistoryProps) {
       </div>
 
       <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
-        {logs.map((log) => (
+        {displayedLogs.map((log) => (
           <div
-            key={log.num}
-            className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all border border-gray-200"
+              key={`${log.num ?? 'manual'}-${log.timestamp}`}
+              className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all border border-gray-200"
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center space-x-2">
@@ -68,7 +69,9 @@ export function LogHistory({ logs }: LogHistoryProps) {
                   <XCircle className="w-4 h-4 text-red-600" />
                 )}
                 <span className="text-sm font-medium text-gray-900">
-                  {log.firstname } {log.lastname}
+                    {log.firstname || log.lastname
+                        ? `${log.firstname ?? ""} ${log.lastname ?? ""}`.trim()
+                        : "Ouverture manuelle"}
                 </span>
               </div>
               <span className="text-xs text-gray-400">
@@ -76,7 +79,7 @@ export function LogHistory({ logs }: LogHistoryProps) {
               </span>
             </div>
             <div className="text-xs text-gray-600 ml-6">
-              Porte : {log.doorId}
+              {log.doorName}
             </div>
           </div>
         ))}

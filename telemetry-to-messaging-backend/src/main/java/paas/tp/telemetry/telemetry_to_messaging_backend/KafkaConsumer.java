@@ -25,10 +25,10 @@ public class KafkaConsumer {
             JsonNode jsonNode = mapper.readTree(message);
             boolean shouldOpen = false;
             String doorId = jsonNode.get("doorId").asText();
-
+            String doorName = jsonNode.get("doorName").asText();
             shouldOpen = jsonNode.get("allowed").asBoolean();
             if (shouldOpen) {
-                String payload = "{\"shouldOpen\":true, \"doorId\":\"" + doorId + "\"}";
+                String payload = "{\"shouldOpen\":true, \"doorId\":\"" + doorId + "\", \"doorName\":\"" + doorName + "\"}";
                 mqttProducer.publish(payload);
             }
         }
