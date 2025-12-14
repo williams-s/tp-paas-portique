@@ -1,18 +1,14 @@
 package fr.upec.episen.paas.core_operational_backend.service;
 
 import java.time.Duration;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import fr.upec.episen.paas.core_operational_backend.dto.StudentDTO;
-
 import io.netty.channel.ChannelOption;
 import reactor.netty.http.client.HttpClient;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -50,9 +46,17 @@ public class CoreApiClient {
         throw new RuntimeException("Aucun core disponible");
     }
 
-    private StudentDTO callCore(String baseUrl, Long id) {
+    private StudentDTO callCore(String baseUrlWithPort, Long id) {
+        // Nettoyer l'URL
+        baseUrlWithPort = baseUrlWithPort.trim();
+        if (baseUrlWithPort.startsWith("- ")) {
+            baseUrlWithPort = baseUrlWithPort.substring(2).trim();
+        }
+        
+        String url = "http://" + baseUrlWithPort + "/core_operational_backend/student/" + id;
+        
         return webClient.get()
-                .uri(baseUrl + ":" + System.getenv("CORE_PORT") + "/operational_backend/student/" + id)
+                .uri(url)
                 .retrieve()
                 .bodyToMono(StudentDTO.class)
                 .block();

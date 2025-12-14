@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/operational_backend/admin")
+@RequestMapping("/core_operational_backend/admin")
 public class AdminController {
 
     @GetMapping("/health")

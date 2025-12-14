@@ -14,12 +14,11 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SHARED_FILE_PATH: /sharedFiles/core_status.yml
-      CORE_PORT: 8088
     configs:
-      - source: core_status_v1
+      - source: core_status_v2
         target: /sharedFiles/core_status.yml
     ports:
-      - "8089:8080"
+      - "8091:8080"
     deploy:
       placement:
         constraints:
@@ -28,15 +27,14 @@ services:
   watchdog:
     image: smailliwdocker/watchdog:latest
     environment:
-      CORE_PORT: 8088
-      CORE_NAME: core-redis
       SHARED_FILE_PATH: /sharedFiles/core_status.yml
-      SSH_USER: ipaas
-      SSH_PRIVATE_KEY: /keys/id_rsa_watchdog
+      DOCKER_HOST: unix:///var/run/docker.sock
+      SWARM_SERVICES: "jwick_stack_core-redis-1,jwick_stack_core-redis-2"
     volumes:
-      - /home/ipaas/.ssh/:/keys:ro
+      - /home/ipaas/.ssh/:/keys:rw
+      - /var/run/docker.sock:/var/run/docker.sock
     configs:
-      - source: core_status_v1
+      - source: core_status_v2
         target: /sharedFiles/core_status.yml
     ports:
       - "8090:8080"
@@ -45,7 +43,7 @@ services:
         constraints:
           - node.labels.role == watchdog
 
-  core-redis:
+  core-redis-1:
     image: smailliwdocker/core-operational-backend:latest
     environment:
       SPRING_DATA_REDIS_HOST: localhost
@@ -55,7 +53,19 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == core-redis
+          - node.hostname == jwick-core-redis-one
+
+  core-redis-2:
+    image: smailliwdocker/core-operational-backend:latest
+    environment:
+      SPRING_DATA_REDIS_HOST: localhost
+      SPRING_DATA_REDIS_PORT: 6379
+    ports:
+      - "8089:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == jwick-core-redis-two
 
   cache-loading-backend:
     #restart: always
@@ -63,7 +73,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
-      REDIS_HOST: 192.168.248.120
+      REDIS_HOST: 192.168.248.108
       REDIS_PORT: 6379
       TZ: Europe/Paris
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
@@ -178,5 +188,5 @@ configs:
     external: true
   mosquitto_conf_v1:
     external: true
-  core_status_v1:
+  core_status_v2:
     external: true

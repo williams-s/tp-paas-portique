@@ -16,7 +16,7 @@ public class CoreConfig {
     @Bean
     public List<String> cores() throws IOException {
         Yaml yaml = new Yaml();
-        var data = yaml.load(Files.newInputStream(Paths.get(System.getenv("shared_file_path"))));
+        var data = yaml.load(Files.newInputStream(Paths.get(System.getenv("SHARED_FILE_PATH"))));
 
         @SuppressWarnings("unchecked")
         List<String> cores = (List<String>) ((Map<?, ?>) data).get("cores");

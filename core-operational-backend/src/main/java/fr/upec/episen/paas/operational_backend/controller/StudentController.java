@@ -12,7 +12,7 @@ import fr.upec.episen.paas.operational_backend.service.StudentService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/operational_backend")
+@RequestMapping("/core_operational_backend")
 @RequiredArgsConstructor
 public class StudentController {
 
