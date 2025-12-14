@@ -6,7 +6,7 @@ RUN mvn clean package
 
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-COPY --from=build /app/target/operational-backend-0.0.1-SNAPSHOT.jar operational-backend.jar
+COPY --from=build /app/target/core-operational-backend-0.0.1-SNAPSHOT.jar core-operational-backend.jar
 EXPOSE 8080
 
-CMD ["java", "-jar", "operational-backend.jar"]
+CMD ["java", "-jar", "core-operational-backend.jar"]
