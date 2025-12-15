@@ -46,7 +46,7 @@ services:
   core-redis-1:
     image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
     environment:
-      SPRING_DATA_REDIS_HOST: localhost
+      SPRING_DATA_REDIS_HOST: 192.168.248.108
       SPRING_DATA_REDIS_PORT: 6379
     ports:
       - "8088:8080"
@@ -58,7 +58,7 @@ services:
   core-redis-2:
     image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
     environment:
-      SPRING_DATA_REDIS_HOST: localhost
+      SPRING_DATA_REDIS_HOST: 192.168.248.109
       SPRING_DATA_REDIS_PORT: 6379
     ports:
       - "8089:8080"

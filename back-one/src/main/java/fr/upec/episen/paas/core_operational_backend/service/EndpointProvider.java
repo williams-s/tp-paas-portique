@@ -19,25 +19,14 @@ public class EndpointProvider {
         @SuppressWarnings("unchecked")
         List<String> cores = (List<String>) ((Map<?, ?>) data).get("cores");
         
-        // Nettoyer les endpoints
         if (cores != null) {
             for (int i = 0; i < cores.size(); i++) {
                 String endpoint = cores.get(i);
                 
-                // 1. Enlever le "- " au début
                 endpoint = endpoint.trim();
                 if (endpoint.startsWith("- ")) {
                     endpoint = endpoint.substring(2).trim();
                 }
-                
-                // 2. Enlever ":null" à la fin si présent
-                if (endpoint.endsWith(":null")) {
-                    endpoint = endpoint.substring(0, endpoint.length() - 5);
-                }
-                
-                // 3. S'assurer qu'il n'y a pas d'autres ":null" au milieu
-                endpoint = endpoint.replace(":null", "");
-                
                 cores.set(i, endpoint);
             }
         }
