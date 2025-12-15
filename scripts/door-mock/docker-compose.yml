@@ -1,0 +1,8 @@
+services:
+  entrance-door-lock:
+    image: smailliwdocker/entrance-door-lock:latest
+    container_name: entrance-door-lock
+    environment:
+      - MQTT_BROKER_HOST=172.31.249.144
+      - MQTT_BROKER_PORT=8883
+      - MQTT_DOOR_TOPIC=door/open

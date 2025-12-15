@@ -1,0 +1,8 @@
+services:
+  badge-sensor-mock:
+    image: smailliwdocker/badge-sensor-mock:latest
+    container_name: badge-sensor-mock
+    environment:
+      - MQTT_BROKER_HOST=172.31.249.144
+      - MQTT_BROKER_PORT=8883
+      - MQTT_BADGE_TOPIC=sensor/data

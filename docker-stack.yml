@@ -1,0 +1,200 @@
+version: "3.8"
+
+networks:
+  core-and-redis-network:
+    driver: overlay
+  front-network:
+    driver: overlay
+  mqtt-and-telemetry-network:
+    driver: overlay
+
+services:
+  back-one:
+    image: smailliwdocker/back-one:${IMAGE_TAG}
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
+      SHARED_FILE_PATH: /sharedFiles/core_status.yml
+    configs:
+      - source: core_status_v2
+        target: /sharedFiles/core_status.yml
+    ports:
+      - "8091:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == back-one
+
+  watchdog:
+    image: smailliwdocker/watchdog:${IMAGE_TAG}
+    environment:
+      SHARED_FILE_PATH: /sharedFiles/core_status.yml
+      DOCKER_HOST: unix:///var/run/docker.sock
+      SWARM_SERVICES: "jwick_stack_core-redis-1,jwick_stack_core-redis-2"
+    volumes:
+      - /home/ipaas/.ssh/:/keys:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: core_status_v2
+        target: /sharedFiles/core_status.yml
+    ports:
+      - "8090:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == watchdog
+
+  core-redis-1:
+    image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
+    environment:
+      SPRING_DATA_REDIS_HOST: 192.168.248.108
+      SPRING_DATA_REDIS_PORT: 6379
+    ports:
+      - "8088:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == jwick-core-redis-one
+
+  core-redis-2:
+    image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
+    environment:
+      SPRING_DATA_REDIS_HOST: 192.168.248.109
+      SPRING_DATA_REDIS_PORT: 6379
+    ports:
+      - "8089:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == jwick-core-redis-two
+
+  cache-loading-backend:
+    image: smailliwdocker/cache-loading-backend:${IMAGE_TAG}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
+      SPRING_DATASOURCE_USERNAME: postgres
+      REDIS_HOST: 192.168.248.108
+      REDIS_PORT: 6379
+      TZ: Europe/Paris
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
+    ports:
+      - "8081:8080"
+    secrets:
+      - source: postgres_password
+        target: POSTGRES_PASSWORD
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == cache-loader
+
+  entrance-cockpit-backend:
+    image: smailliwdocker/entrance-cockpit-backend:${IMAGE_TAG}
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
+      SPRING_DATASOURCE_USERNAME: postgres
+    ports:
+      - "8087:8087"
+    secrets:
+      - source: postgres_password
+        target: POSTGRES_PASSWORD
+    networks:
+      - front-network
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == front
+
+  static-server-backend:
+    image: smailliwdocker/static-server-backend:${IMAGE_TAG}
+    ports:
+      - "5173:80"
+    networks:
+      - front-network
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == front
+
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8883:8883"
+    configs:
+      - source: nginx_conf_v2
+        target: /etc/nginx/nginx.conf
+    secrets:
+      - source: nginx_cert_v1
+        target: /etc/nginx/ssl/reverse-proxy.crt
+      - source: nginx_key_v1
+        target: /etc/nginx/ssl/reverse-proxy.key
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == reverse-proxy
+
+  mqtt5:
+    image: eclipse-mosquitto:2.0.18
+    ports:
+      - "1883:1883"
+    configs:
+      - source: mosquitto_conf_v1
+        target: /mosquitto/config/mosquitto.conf
+    volumes:
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+    networks:
+      - mqtt-and-telemetry-network
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == mqtt-telemetry
+
+  telemetry-to-messaging-backend:
+    image: smailliwdocker/telemetry-to-messaging-backend:${IMAGE_TAG}
+    environment:
+      MQTT_BROKER_HOST: mqtt5
+      MQTT_BROKER_PORT: 1883
+      MQTT_BADGE_TOPIC: sensor/data
+      MQTT_DOOR_TOPIC: door/open
+    ports:
+      - "8085:8085"
+    networks:
+      - mqtt-and-telemetry-network
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == mqtt-telemetry
+
+  photo-storage-service:
+    image: smailliwdocker/photo-storage-service:${IMAGE_TAG}
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/www/faces:/var/www/faces
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == images-storage
+
+volumes:
+  redis_data:
+  mqtt_data:
+  mqtt_log:
+
+secrets:
+  postgres_password:
+    external: true
+  nginx_cert_v1:
+    external: true
+  nginx_key_v1:
+    external: true
+
+configs:
+  nginx_conf_v2:
+    external: true
+  mosquitto_conf_v1:
+    external: true
+  core_status_v2:
+    external: true
