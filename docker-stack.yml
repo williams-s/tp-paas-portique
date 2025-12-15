@@ -10,7 +10,7 @@ networks:
 
 services:
   back-one:
-    image: smailliwdocker/back-one:latest
+    image: smailliwdocker/back-one:${IMAGE_TAG}
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SHARED_FILE_PATH: /sharedFiles/core_status.yml
@@ -25,7 +25,7 @@ services:
           - node.labels.role == back-one
 
   watchdog:
-    image: smailliwdocker/watchdog:latest
+    image: smailliwdocker/watchdog:${IMAGE_TAG}
     environment:
       SHARED_FILE_PATH: /sharedFiles/core_status.yml
       DOCKER_HOST: unix:///var/run/docker.sock
@@ -44,7 +44,7 @@ services:
           - node.labels.role == watchdog
 
   core-redis-1:
-    image: smailliwdocker/core-operational-backend:latest
+    image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
     environment:
       SPRING_DATA_REDIS_HOST: localhost
       SPRING_DATA_REDIS_PORT: 6379
@@ -56,7 +56,7 @@ services:
           - node.hostname == jwick-core-redis-one
 
   core-redis-2:
-    image: smailliwdocker/core-operational-backend:latest
+    image: smailliwdocker/core-operational-backend:${IMAGE_TAG}
     environment:
       SPRING_DATA_REDIS_HOST: localhost
       SPRING_DATA_REDIS_PORT: 6379
@@ -68,8 +68,7 @@ services:
           - node.hostname == jwick-core-redis-two
 
   cache-loading-backend:
-    #restart: always
-    image: smailliwdocker/cache-loading-backend:latest
+    image: smailliwdocker/cache-loading-backend:${IMAGE_TAG}
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
       SPRING_DATASOURCE_USERNAME: postgres
@@ -77,9 +76,8 @@ services:
       REDIS_PORT: 6379
       TZ: Europe/Paris
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Paris"
-      # Autres variables d'environnement Spring Boot si nécessaire
     ports:
-      - "8081:8080" # Spring Boot utilise le port 8080 par défaut
+      - "8081:8080"
     secrets:
       - source: postgres_password
         target: POSTGRES_PASSWORD
@@ -89,7 +87,7 @@ services:
           - node.labels.role == cache-loader
 
   entrance-cockpit-backend:
-    image: smailliwdocker/entrance-cockpit-backend:latest
+    image: smailliwdocker/entrance-cockpit-backend:${IMAGE_TAG}
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 192.168.248.103:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://34.155.209.62:5432/registered_people
@@ -107,7 +105,7 @@ services:
           - node.labels.role == front
 
   static-server-backend:
-    image: smailliwdocker/static-server-backend:latest
+    image: smailliwdocker/static-server-backend:${IMAGE_TAG}
     ports:
       - "5173:80"
     networks:
@@ -118,7 +116,7 @@ services:
           - node.labels.role == front
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.25-alpine
     ports:
       - "80:80"
       - "443:443"
@@ -131,14 +129,13 @@ services:
         target: /etc/nginx/ssl/reverse-proxy.crt
       - source: nginx_key_v1
         target: /etc/nginx/ssl/reverse-proxy.key
-    restart: unless-stopped
     deploy:
       placement:
         constraints:
           - node.labels.role == reverse-proxy
 
   mqtt5:
-    image: eclipse-mosquitto
+    image: eclipse-mosquitto:2.0.18
     ports:
       - "1883:1883"
     configs:
@@ -155,12 +152,12 @@ services:
           - node.labels.role == mqtt-telemetry
 
   telemetry-to-messaging-backend:
-    image: smailliwdocker/telemetry-to-messaging-backend:latest
+    image: smailliwdocker/telemetry-to-messaging-backend:${IMAGE_TAG}
     environment:
-      - MQTT_BROKER_HOST=mqtt5
-      - MQTT_BROKER_PORT=1883
-      - MQTT_BADGE_TOPIC=sensor/data
-      - MQTT_DOOR_TOPIC=door/open
+      MQTT_BROKER_HOST: mqtt5
+      MQTT_BROKER_PORT: 1883
+      MQTT_BADGE_TOPIC: sensor/data
+      MQTT_DOOR_TOPIC: door/open
     ports:
       - "8085:8085"
     networks:
@@ -171,7 +168,7 @@ services:
           - node.labels.role == mqtt-telemetry
 
   photo-storage-service:
-    image: smailliwdocker/photo-storage-service:latest
+    image: smailliwdocker/photo-storage-service:${IMAGE_TAG}
     ports:
       - "8000:8000"
     volumes:
@@ -201,4 +198,3 @@ configs:
     external: true
   core_status_v2:
     external: true
-

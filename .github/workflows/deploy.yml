@@ -15,6 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set IMAGE_TAG from commit
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -24,56 +28,42 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push cache-loading-backend image
+      - name: Build and push images
         run: |
-          docker build -t smailliwdocker/cache-loading-backend:latest ./cache-loading-backend
-          docker push smailliwdocker/cache-loading-backend:latest
+          docker build -t smailliwdocker/cache-loading-backend:$IMAGE_TAG ./cache-loading-backend
+          docker push smailliwdocker/cache-loading-backend:$IMAGE_TAG
 
-      - name: Build and push core-operational-backend image
-        run: |
-          docker build -t smailliwdocker/core-operational-backend:latest ./core-operational-backend
-          docker push smailliwdocker/core-operational-backend:latest
+          docker build -t smailliwdocker/core-operational-backend:$IMAGE_TAG ./core-operational-backend
+          docker push smailliwdocker/core-operational-backend:$IMAGE_TAG
 
-      - name: Build and push entrance-cockpit-backend image
-        run: |
-          docker build -t smailliwdocker/entrance-cockpit-backend:latest ./entrance-cockpit-backend
-          docker push smailliwdocker/entrance-cockpit-backend:latest
+          docker build -t smailliwdocker/entrance-cockpit-backend:$IMAGE_TAG ./entrance-cockpit-backend
+          docker push smailliwdocker/entrance-cockpit-backend:$IMAGE_TAG
 
-      - name: Build and push static-server-backend image
-        run: |
-          docker build --build-arg VITE_WS_URL="wss://172.31.249.144/entrance/ws" -t smailliwdocker/static-server-backend:latest ./static-server-backend
-          docker push smailliwdocker/static-server-backend:latest
+          docker build --build-arg VITE_WS_URL="wss://172.31.249.144/entrance/ws" \
+            -t smailliwdocker/static-server-backend:$IMAGE_TAG ./static-server-backend
+          docker push smailliwdocker/static-server-backend:$IMAGE_TAG
 
-      - name: Build and push telemetry-to-messaging-backend image
-        run: |
-          docker build -t smailliwdocker/telemetry-to-messaging-backend:latest ./telemetry-to-messaging-backend
-          docker push smailliwdocker/telemetry-to-messaging-backend:latest
+          docker build -t smailliwdocker/telemetry-to-messaging-backend:$IMAGE_TAG ./telemetry-to-messaging-backend
+          docker push smailliwdocker/telemetry-to-messaging-backend:$IMAGE_TAG
 
-      - name: Build and push photo-storage-service image
-        run: |
-          docker build -t smailliwdocker/photo-storage-service:latest ./photo-storage-service
-          docker push smailliwdocker/photo-storage-service:latest
+          docker build -t smailliwdocker/photo-storage-service:$IMAGE_TAG ./photo-storage-service
+          docker push smailliwdocker/photo-storage-service:$IMAGE_TAG
 
-      - name: Build and push badge-sensor-mock image
-        run: |
-          docker build -t smailliwdocker/badge-sensor-mock:latest ./badge-sensor-mock
-          docker push smailliwdocker/badge-sensor-mock:latest
+          docker build -t smailliwdocker/badge-sensor-mock:$IMAGE_TAG ./badge-sensor-mock
+          docker push smailliwdocker/badge-sensor-mock:$IMAGE_TAG
 
-      - name: Build and push entrance-door-lock image
-        run: |
-          docker build -t smailliwdocker/entrance-door-lock:latest ./entrance-door-lock
-          docker push smailliwdocker/entrance-door-lock:latest
+          docker build -t smailliwdocker/entrance-door-lock:$IMAGE_TAG ./entrance-door-lock
+          docker push smailliwdocker/entrance-door-lock:$IMAGE_TAG
 
-      - name : Build and push back-one image
-        run : |
-          docker build -t smailliwdocker/back-one:latest ./back-one
-          docker push smailliwdocker/back-one:latest
+          docker build -t smailliwdocker/back-one:$IMAGE_TAG ./back-one
+          docker push smailliwdocker/back-one:$IMAGE_TAG
 
-      - name : Build and push watchdog image
-        run : |
-          docker build -t smailliwdocker/watchdog:latest ./watchdog
-          docker push smailliwdocker/watchdog:latest
+          docker build -t smailliwdocker/watchdog:$IMAGE_TAG ./watchdog
+          docker push smailliwdocker/watchdog:$IMAGE_TAG
 
       - name: Deploy stack to Swarm
         run: |
-          docker stack deploy -c docker-stack.yml jwick_stack
+          docker stack deploy \
+            --with-registry-auth \
+            -c docker-stack.yml \
+            jwick_stack
