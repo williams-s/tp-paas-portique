@@ -1,10 +1,11 @@
-name: Build & Deploy JWICK Stack
+name: Build & Deploy Database Stack
 
 on:
   push:
     branches:
       - dev
       - photo-badging
+      - watchdog
 
 jobs:
   build-and-deploy:
@@ -62,6 +63,16 @@ jobs:
         run: |
           docker build -t smailliwdocker/entrance-door-lock:latest ./entrance-door-lock
           docker push smailliwdocker/entrance-door-lock:latest
+
+      - name : Build and push back-one image
+        run : |
+          docker build -t smailliwdocker/back-one:latest ./back-one
+          docker push smailliwdocker/back-one:latest
+
+      - name : Build and push watchdog image
+        run : |
+          docker build -t smailliwdocker/watchdog:latest ./watchdog
+          docker push smailliwdocker/watchdog:latest
 
       - name: Deploy stack to Swarm
         run: |
